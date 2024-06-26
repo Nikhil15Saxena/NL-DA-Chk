@@ -165,7 +165,7 @@ def main():
             # Bartlett’s Test of Sphericity
             chi2, p = calculate_bartlett_sphericity(df2)
             st.markdown("**Bartlett’s Test of Sphericity:**")
-            st.write(f"Chi-squared value: {chi2}, p-value: {p:.4f}")
+            st.write(f"Chi-squared value: {chi2}, p-value: {p:.3f}")
             st.markdown("""
             **What it is**: A statistical test used to examine the hypothesis that the variables in a dataset are uncorrelated.
 
