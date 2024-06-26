@@ -110,7 +110,7 @@ def main():
 
             # Bartlett’s Test of Sphericity
             chi2, p = calculate_bartlett_sphericity(df2)
-            st.write("Bartlett’s Test of Sphericity:")
+            st.write("**Bartlett’s Test of Sphericity:**")
             st.write(f"Chi-squared value: {chi2}, p-value: {p}")
             st.write("""
             **What it is**: A statistical test used to examine the hypothesis that the variables in a dataset are uncorrelated.
@@ -119,7 +119,7 @@ def main():
 
             # Kaiser-Meyer-Olkin (KMO) Test
             kmo_values, kmo_model = calculate_kmo(df2)
-            st.write("Kaiser-Meyer-Olkin (KMO) Test:")
+            st.write("**Kaiser-Meyer-Olkin (KMO) Test:**")
             st.write(f"KMO Test Statistic: {kmo_model}")
             st.write("""
             **What it is**: A measure of how suited data is for factor analysis. It assesses the proportion of variance among variables that might be common variance.
