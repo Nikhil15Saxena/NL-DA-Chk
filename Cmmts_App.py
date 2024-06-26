@@ -34,6 +34,17 @@ hide_streamlit_style = """
                 cursor: pointer;
                 border-radius: 16px;
             }
+            .sidebar .sidebar-content {
+                background-color: #f0f0f0;
+                padding: 10px;
+                border-radius: 10px;
+            }
+            .sidebar .sidebar-content h2 {
+                color: #4CAF50;
+            }
+            body {
+                background-color: #f4f4f9;
+            }
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
