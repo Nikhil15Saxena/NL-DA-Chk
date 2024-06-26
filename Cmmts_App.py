@@ -17,37 +17,54 @@ import graphviz
 import xgboost as xgb
 
 # CSS to inject contained in a string
-hide_streamlit_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            .stButton>button {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                padding: 10px 24px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                margin: 4px 2px;
-                cursor: pointer;
-                border-radius: 16px;
-            }
-            .sidebar .sidebar-content {
-                background-color: #f0f0f0;
-                padding: 10px;
-                border-radius: 10px;
-            }
-            .sidebar .sidebar-content h2 {
-                color: #4CAF50;
-            }
-            body {
-                background-color: #f4f4f9;
-            }
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+custom_css = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+body {
+    background-color: #f0f4f8;
+    font-family: 'Arial', sans-serif;
+    color: #333333;
+}
+.stApp {
+    background-color: #f0f4f8;
+}
+.stButton>button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 16px;
+}
+.sidebar .sidebar-content {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 10px;
+}
+.sidebar .sidebar-content h2 {
+    color: #4CAF50;
+}
+.stHeader, .stTitle, .stSubheader {
+    color: #4CAF50;
+}
+.stMarkdown {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 10px;
+}
+.stMarkdown h2 {
+    color: #4CAF50;
+}
+</style>
+"""
+
+st.markdown(custom_css, unsafe_allow_html=True)
 
 # Streamlit app
 def main():
