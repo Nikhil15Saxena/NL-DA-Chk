@@ -16,18 +16,16 @@ from io import StringIO
 import graphviz
 import xgboost as xgb
 
-# CSS to inject contained in a string
+# Enhanced CSS to inject contained in a string
 custom_css = """
 <style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
 body {
-    background-color: #f0f4f8;
+    background: linear-gradient(to bottom right, #f0f4f8, #e0eaf3);
     font-family: 'Arial', sans-serif;
     color: #333333;
 }
 .stApp {
-    background-color: #f0f4f8;
+    background: transparent;
 }
 .stButton>button {
     background-color: #4CAF50;
@@ -41,10 +39,14 @@ body {
     margin: 4px 2px;
     cursor: pointer;
     border-radius: 16px;
+    transition: background-color 0.3s ease;
+}
+.stButton>button:hover {
+    background-color: #45a049;
 }
 .sidebar .sidebar-content {
     background-color: #f8f9fa;
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
 }
 .sidebar .sidebar-content h2 {
@@ -55,11 +57,18 @@ body {
 }
 .stMarkdown {
     background-color: #ffffff;
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 .stMarkdown h2 {
     color: #4CAF50;
+}
+footer {
+    visibility: hidden;
+}
+#MainMenu {
+    visibility: hidden;
 }
 </style>
 """
