@@ -3,24 +3,19 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_curve, auc
 from sklearn.model_selection import train_test_split, GridSearchCV
 from factor_analyzer import FactorAnalyzer
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.tools.tools import add_constant
 from factor_analyzer.factor_analyzer import calculate_bartlett_sphericity, calculate_kmo
-from sklearn.tree import export_graphviz
-import pydotplus
-from io import StringIO
-import graphviz
-import xgboost as xgb
 
 # Enhanced CSS to inject contained in a string
 custom_css = """
 <style>
 body {
-    background: linear-gradient(to bottom right, #f0f4f8, #e0eaf3);
+    background: linear-gradient(to bottom right, #f8f9fa, #e0eaf3);
     font-family: 'Arial', sans-serif;
     color: #333333;
 }
@@ -45,7 +40,7 @@ body {
     background-color: #45a049;
 }
 .sidebar .sidebar-content {
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
 }
@@ -75,6 +70,28 @@ footer {
 
 st.markdown(custom_css, unsafe_allow_html=True)
 
+# Streamlit app
+def main():
+    st.title("Non-Linear Classification Analysis Model")
+
+    # Enhanced About section
+    st.sidebar.title("About")
+    st.sidebar.markdown("""
+        ### About this App
+        This app was created by Nikhil Saxena for the LMRI team. It allows for comprehensive data analysis, including filtering, factor analysis, and random forest classification.
+        
+        **Contact:** 
+        - Email: [Nikhil.Saxena@lilly.com](mailto:Nikhil.Saxena@lilly.com)
+        
+        **Features:**
+        - Upload and filter datasets
+        - Perform factor analysis with customizable settings
+        - Train and evaluate a Random Forest classifier with optional hyperparameter tuning
+        - Visualize results with ROC curves and feature importance
+        
+        ---
+        """, unsafe_allow_html=True)
+    
 # Streamlit app
 def main():
     st.title("Non-Linear Classification Analysis Model_Commnts")
