@@ -3,13 +3,18 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_curve, auc
 from sklearn.model_selection import train_test_split, GridSearchCV
 from factor_analyzer import FactorAnalyzer
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.tools.tools import add_constant
 from factor_analyzer.factor_analyzer import calculate_bartlett_sphericity, calculate_kmo
+from sklearn.tree import export_graphviz
+import pydotplus
+from io import StringIO
+import graphviz
+import xgboost as xgb
 
 # Enhanced CSS to inject contained in a string
 custom_css = """
