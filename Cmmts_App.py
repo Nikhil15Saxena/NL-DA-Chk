@@ -74,28 +74,6 @@ footer {
 """
 
 st.markdown(custom_css, unsafe_allow_html=True)
-
-# Streamlit app
-def main():
-    st.title("Non-Linear Classification Analysis Model")
-
-    # Enhanced About section
-    st.sidebar.title("About")
-    st.sidebar.markdown("""
-        ### About this App
-        This app was created by Nikhil Saxena for the LMRI team. It allows for comprehensive data analysis, including filtering, factor analysis, and random forest classification.
-        
-        **Contact:** 
-        - Email: [Nikhil.Saxena@lilly.com](mailto:Nikhil.Saxena@lilly.com)
-        
-        **Features:**
-        - Upload and filter datasets
-        - Perform factor analysis with customizable settings
-        - Train and evaluate a Random Forest classifier with optional hyperparameter tuning
-        - Visualize results with ROC curves and feature importance
-        
-        ---
-        """, unsafe_allow_html=True)
     
 # Streamlit app
 def main():
