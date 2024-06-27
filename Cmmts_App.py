@@ -16,64 +16,27 @@ from io import StringIO
 import graphviz
 import xgboost as xgb
 
-# Enhanced CSS to inject contained in a string
-custom_css = """
-<style>
-body {
-    background: linear-gradient(to bottom right, #f8f9fa, #e0eaf3);
-    font-family: 'Arial', sans-serif;
-    color: #333333;
-}
-.stApp {
-    background: transparent;
-}
-.stButton>button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 24px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 16px;
-    transition: background-color 0.3s ease;
-}
-.stButton>button:hover {
-    background-color: #45a049;
-}
-.sidebar .sidebar-content {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-}
-.sidebar .sidebar-content h2 {
-    color: #4CAF50;
-}
-.stHeader, .stTitle, .stSubheader {
-    color: #4CAF50;
-}
-.stMarkdown {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-.stMarkdown h2 {
-    color: #4CAF50;
-}
-footer {
-    visibility: hidden;
-}
-#MainMenu {
-    visibility: hidden;
-}
-</style>
-"""
-
-st.markdown(custom_css, unsafe_allow_html=True)
+# CSS to inject contained in a string
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            .stButton>button {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 10px 24px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+                border-radius: 16px;
+            }
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
     
 # Streamlit app
 def main():
