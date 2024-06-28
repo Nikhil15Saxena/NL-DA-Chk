@@ -112,11 +112,12 @@ def main():
             chi2, p = calculate_bartlett_sphericity(df2)
             st.markdown("**Bartlett’s Test of Sphericity:**")
             st.write(f"Chi-squared value: {chi2}, p-value: {p:.3f}")
-            st.expander(st.write("""
-            **What it is**: A statistical test used to examine the hypothesis that the variables in a dataset are uncorrelated.
+            with st.expander("Description"):
+                        st.write("""
+                        **What it is**: A statistical test used to examine the hypothesis that the variables in a dataset are uncorrelated.
             
-            **What it tells us**: If the test is significant (p < 0.05), it indicates that the variables are correlated and suitable for factor analysis.
-            """),expanded=False, *, icon=None)
+                        **What it tells us**: If the test is significant (p < 0.05), it indicates that the variables are correlated and suitable for factor analysis.
+                        """)
 
 
             # Kaiser-Meyer-Olkin (KMO) Test
