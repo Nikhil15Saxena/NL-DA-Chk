@@ -340,12 +340,10 @@ def main():
             # Feature Importance
             imp_df = pd.DataFrame({"varname": X_train.columns, "Importance": model.feature_importances_ * 100})
             imp_df.sort_values(by="Importance", ascending=False, inplace=True)
-            st.write("Feature Importance:")
-            st.write(imp_df)
             
             # Plotting Feature Importance with color gradient and data labels
             plt.figure(figsize=(10, 6))
-            bars = plt.barh(range(len(imp_df)), imp_df["Importance"], align='center', color=plt.cm.get_cmap('Blues')(imp_df["Importance"] / max(imp_df["Importance"])))
+            bars = plt.barh(range(len(imp_df)), imp_df["Importance"], align='center', color=plt.cm.get_cmap('Blues')(imp_df["Importance"] / imp_df["Importance"].max()))
             plt.yticks(range(len(imp_df)), imp_df["varname"])
             plt.gca().invert_yaxis()  # Invert y-axis to have the most important feature at the top
             plt.xlabel('Importance')
@@ -356,7 +354,7 @@ def main():
                 plt.text(bar.get_width() + 1, bar.get_y() + bar.get_height()/2, f'{label}%', ha='center', va='center', color='black')
             
             # Customize color bar
-            sm = plt.cm.ScalarMappable(cmap='Blues', norm=plt.Normalize(vmin=0, vmax=max(imp_df["Importance"])))
+            sm = plt.cm.ScalarMappable(cmap='Blues', norm=plt.Normalize(vmin=0, vmax=imp_df["Importance"].max()))
             sm._A = []  # Empty array for color bar
             cbar = plt.colorbar(sm, orientation='vertical')
             cbar.set_label('Importance Gradient')
