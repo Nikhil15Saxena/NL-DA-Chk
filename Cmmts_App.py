@@ -353,7 +353,7 @@ def main():
             st.pyplot(plt)
 
             # Add explanation for feature importance
-            with.st.expander("Description"):
+            with st.expander("Description"):
                         st.markdown("""
                         **What it is**: Feature importance is a measure of the influence each feature has on the predictions made by the model.
                         
