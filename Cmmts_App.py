@@ -200,31 +200,10 @@ def main():
             **What it tells us**: High loadings indicate that a variable strongly influences the factor. It helps in understanding the underlying structure of the data.
             """)
 
-            # Download factor loadings as CSV
-            csv = fa_df.to_csv(index=True).encode('utf-8')
-            csv_b64 = base64.b64encode(csv).decode()  # Convert to base64
+             # Download factor loadings as CSV
+            csv = fa_df.to_csv().encode('utf-8')
+            st.download_button(label="Download Factor Loadings as CSV", data=csv, file_name='factor_loadings.csv', mime='text/csv')
             
-            button_style = """
-                <style>
-                    .download-button {
-                        background-color: #4CAF50; 
-                        color: white;
-                        border: none;
-                        padding: 10px 24px;
-                        text-align: center;
-                        text-decoration: none;
-                        display: inline-block;
-                        font-size: 16px;
-                        margin: 4px 2px;
-                        cursor: pointer;
-                        border-radius: 16px;
-                    }
-                </style>
-                <a download="factor_loadings.csv" href="data:text/csv;base64,{csv_b64}" class="download-button">Download Factor Loadings as CSV</a>
-            """.format(csv_b64=csv_b64)
-            
-            st.markdown(button_style, unsafe_allow_html=True)
-
             # Display variance explained by each factor
             variance_df = pd.DataFrame(fa.get_factor_variance().round(2), index=["Variance", "Proportional Var", "Cumulative Var"])
             st.write("Variance Explained by Each Factor:")
