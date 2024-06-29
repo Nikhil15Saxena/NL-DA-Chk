@@ -337,30 +337,20 @@ def main():
             # Feature importance
             st.subheader("Feature Importance")
 
-            # Calculate feature importance
+            # Feature Importance
+            imp_df = pd.DataFrame({"varname": X_train.columns, "Importance": model.feature_importances_ * 100})
+            imp_df.sort_values(by="Importance", ascending=False, inplace=True)
+            st.write("Feature Importance:")
+            st.write(imp_df)
+
             feature_importance = model.feature_importances_
             sorted_idx = np.argsort(feature_importance)
-
-            # Create a DataFrame for feature importance
-            feature_importance_df = pd.DataFrame({
-                'Feature': df2.columns,
-                'Importance': feature_importance
-            }).sort_values(by='Importance', ascending=False)
-
-            # Display feature importance table and plot side by side
-            col1, col2 = st.columns(2)
-
-            with col1:
-                st.write("Feature Importance Table:")
-                st.dataframe(feature_importance_df)
-
-            with col2:
-                plt.figure(figsize=(10, 6))
-                plt.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
-                plt.yticks(range(len(sorted_idx)), np.array(df2.columns)[sorted_idx])
-                plt.xlabel('Importance')
-                plt.title('Feature Importance')
-                st.pyplot(plt)
+            plt.figure(figsize=(10, 6))
+            plt.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
+            plt.yticks(range(len(sorted_idx)), np.array(df2.columns)[sorted_idx])
+            plt.xlabel('Importance')
+            plt.title('Feature Importance')
+            st.pyplot(plt)
 
             # Add explanation for feature importance
             st.markdown("""
