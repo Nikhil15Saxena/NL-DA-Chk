@@ -343,11 +343,10 @@ def main():
             st.write("Feature Importance:")
             st.write(imp_df)
 
-            feature_importance = pd.DataFrame({"varname": X_train.columns, "Importance": model.feature_importances_ * 100})
-            sorted_idx = feature_importance.sort_values(by="Importance", ascending=False, inplace=True)
+            # Plotting Feature Importance
             plt.figure(figsize=(10, 6))
-            plt.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center')
-            plt.yticks(range(len(sorted_idx)), np.array(df2.columns)[sorted_idx])
+            plt.barh(range(len(imp_df)), imp_df["Importance"], align='center')
+            plt.yticks(range(len(imp_df)), imp_df["varname"])
             plt.xlabel('Importance')
             plt.title('Feature Importance')
             st.pyplot(plt)
