@@ -345,11 +345,11 @@ def main():
 
             # Plotting Feature Importance
             plt.figure(figsize=(10, 6))
-            plt.barh(range(len(imp_df)), imp_df["Importance"], align='center', color='skyblue')
+            plt.barh(range(len(imp_df)), imp_df["Importance"], align='center')
             plt.yticks(range(len(imp_df)), imp_df["varname"])
             plt.gca().invert_yaxis()  # Invert y-axis to have the most important feature at the top
             plt.xlabel('Importance')
-            plt.title('Feature Importance (Descending Order)')
+            plt.title('Feature Importance')
             st.pyplot(plt)
 
             # Add explanation for feature importance
