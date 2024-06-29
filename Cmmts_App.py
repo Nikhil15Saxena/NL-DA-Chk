@@ -13,6 +13,8 @@ from factor_analyzer.factor_analyzer import calculate_bartlett_sphericity, calcu
 from sklearn.tree import export_graphviz
 import pydotplus
 from io import StringIO
+import base64
+import streamlit.components.v1 as components
 
 # CSS to inject contained in a string
 hide_streamlit_style = """
@@ -199,7 +201,7 @@ def main():
             """)
 
             # Download factor loadings as CSV
-            csv = fa_df.to_csv().encode('utf-8')
+            csv = fa_df.to_csv(index=True).encode('utf-8')
             csv_b64 = base64.b64encode(csv).decode()  # Convert to base64
             
             button_style = """
@@ -221,7 +223,7 @@ def main():
                 <a download="factor_loadings.csv" href="data:text/csv;base64,{csv_b64}" class="download-button">Download Factor Loadings as CSV</a>
             """.format(csv_b64=csv_b64)
             
-            components.html(button_style, height=60)
+            st.markdown(button_style, unsafe_allow_html=True)
 
             # Display variance explained by each factor
             variance_df = pd.DataFrame(fa.get_factor_variance().round(2), index=["Variance", "Proportional Var", "Cumulative Var"])
