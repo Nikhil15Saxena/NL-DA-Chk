@@ -166,6 +166,7 @@ def main():
             vif_data = pd.DataFrame()
             vif_data["Variable"] = df2_with_const.columns
             vif_data["VIF"] = [variance_inflation_factor(df2_with_const.values, i) for i in range(df2_with_const.shape[1])]
+            vif_data = vif_data[vif_data["Variable"] !="const"]
             st.write("Variance Inflation Factor (VIF):")
             st.write(vif_data)
             with st.expander("Description"):
