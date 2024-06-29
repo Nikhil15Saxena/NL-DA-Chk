@@ -126,9 +126,9 @@ def main():
             st.write(f"KMO Test Statistic: {kmo_model}")
             with st.expander("Description"):
                         st.markdown("""
-                        **What it is**: A measure of how suited data is for factor analysis. It assesses the proportion of variance among variables that might be common variance.
+                        **What it is**: This test measures the adequacy of sampling for factor analysis.
                         
-                        **What it tells us**: A KMO value closer to 1 indicates that a factor analysis may be useful. Values below 0.6 generally indicate the data is not suitable for factor analysis.
+                        **What it tells us**: A KMO value closer to 1 indicates that the data is suitable for factor analysis. Values below 0.6 generally indicate the data is not suitable for factor analysis.
                         """)
 
             # Scree Plot
