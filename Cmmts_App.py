@@ -340,35 +340,27 @@ def main():
             # Feature Importance
             imp_df = pd.DataFrame({"varname": X_train.columns, "Importance": model.feature_importances_ * 100})
             imp_df.sort_values(by="Importance", ascending=False, inplace=True)
-            
-            # Plotting Feature Importance with color gradient and data labels
+            st.write("Feature Importance:")
+            st.write(imp_df)
+
+            # Plotting Feature Importance
             plt.figure(figsize=(10, 6))
-            bars = plt.barh(range(len(imp_df)), imp_df["Importance"], align='center', color=plt.cm.get_cmap('Blues')(imp_df["Importance"] / imp_df["Importance"].max()))
+            plt.barh(range(len(imp_df)), imp_df["Importance"], align='center')
             plt.yticks(range(len(imp_df)), imp_df["varname"])
             plt.gca().invert_yaxis()  # Invert y-axis to have the most important feature at the top
             plt.xlabel('Importance')
-            plt.title('Feature Importance (Descending Order)')
-            
-            # Add data labels
-            for bar, label in zip(bars, imp_df["Importance"].round(2)):
-                plt.text(bar.get_width() + 1, bar.get_y() + bar.get_height()/2, f'{label}%', ha='center', va='center', color='black')
-            
-            # Customize color bar
-            sm = plt.cm.ScalarMappable(cmap='Blues', norm=plt.Normalize(vmin=0, vmax=imp_df["Importance"].max()))
-            sm._A = []  # Empty array for color bar
-            cbar = plt.colorbar(sm, orientation='vertical')
-            cbar.set_label('Importance Gradient')
-            
+            plt.title('Feature Importance')
             st.pyplot(plt)
 
             # Add explanation for feature importance
-            st.markdown("""
-            **What it is**: Feature importance is a measure of the influence each feature has on the predictions made by the model.
-            
-            **What it tells us**: Higher importance values indicate that the feature has a greater impact on the model's decision-making process.
-            
-            **How to interpret it**: Features with higher importance scores contribute more significantly to the prediction outcomes. This can help identify which variables are most influential in determining the target variable.
-            """)
+            with.st.expander("Description"):
+                        st.markdown("""
+                        **What it is**: Feature importance is a measure of the influence each feature has on the predictions made by the model.
+                        
+                        **What it tells us**: Higher importance values indicate that the feature has a greater impact on the model's decision-making process.
+                        
+                        **How to interpret it**: Features with higher importance scores contribute more significantly to the prediction outcomes. This can help identify which variables are most influential in determining the target variable.
+                        """)
             
             # Button to display ROC Curve
             if st.button("Show ROC Curve"):
