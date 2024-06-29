@@ -9,3 +9,4 @@ statsmodels
 pydotplus
 graphviz
 xgboost
+base64
