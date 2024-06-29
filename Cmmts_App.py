@@ -342,14 +342,25 @@ def main():
             imp_df.sort_values(by="Importance", ascending=False, inplace=True)
             st.write("Feature Importance:")
             st.write(imp_df)
-
-            # Plotting Feature Importance
+            
+            # Plotting Feature Importance with color gradient and data labels
             plt.figure(figsize=(10, 6))
-            plt.barh(range(len(imp_df)), imp_df["Importance"], align='center')
+            bars = plt.barh(range(len(imp_df)), imp_df["Importance"], align='center', color=plt.cm.get_cmap('Blues')(imp_df["Importance"] / max(imp_df["Importance"])))
             plt.yticks(range(len(imp_df)), imp_df["varname"])
             plt.gca().invert_yaxis()  # Invert y-axis to have the most important feature at the top
             plt.xlabel('Importance')
-            plt.title('Feature Importance')
+            plt.title('Feature Importance (Descending Order)')
+            
+            # Add data labels
+            for bar, label in zip(bars, imp_df["Importance"].round(2)):
+                plt.text(bar.get_width() + 1, bar.get_y() + bar.get_height()/2, f'{label}%', ha='center', va='center', color='black')
+            
+            # Customize color bar
+            sm = plt.cm.ScalarMappable(cmap='Blues', norm=plt.Normalize(vmin=0, vmax=max(imp_df["Importance"])))
+            sm._A = []  # Empty array for color bar
+            cbar = plt.colorbar(sm, orientation='vertical')
+            cbar.set_label('Importance Gradient')
+            
             st.pyplot(plt)
 
             # Add explanation for feature importance
