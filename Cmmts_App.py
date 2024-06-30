@@ -126,9 +126,9 @@ def main():
             st.write(f"KMO Test Statistic: {kmo_model}")
             with st.expander("Description"):
                         st.markdown("""
-                        **What it is**: This test measures the adequacy of sampling for factor analysis.
+                        **What it is**: A measure of how suited data is for factor analysis. It assesses the proportion of variance among variables that might be common variance.
                         
-                        **What it tells us**: A KMO value closer to 1 indicates that the data is suitable for factor analysis. Values below 0.6 generally indicate the data is not suitable for factor analysis.
+                        **What it tells us**: A KMO value closer to 1 indicates that a factor analysis may be useful. Values below 0.6 generally indicate the data is not suitable for factor analysis.
                         """)
 
             # Scree Plot
@@ -154,60 +154,42 @@ def main():
             plt.figure(figsize=(20, 10))
             sns.heatmap(df2.corr(), cmap="Reds", annot=True)
             st.pyplot(plt)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: A visual representation of the correlation matrix where the strength of correlation is represented by color intensity.
-                        
-                        **What it tells us**: Helps to identify the strength and direction of relationships between variables. High correlation values indicate multicollinearity.
-                        """)
+            st.markdown("""
+            **What it is**: A visual representation of the correlation matrix where the strength of correlation is represented by color intensity.
+            
+            **What it tells us**: Helps to identify the strength and direction of relationships between variables. High correlation values indicate multicollinearity.
+            """)
 
             # Variance Inflation Factor (VIF)
             df2_with_const = add_constant(df2)
             vif_data = pd.DataFrame()
             vif_data["Variable"] = df2_with_const.columns
             vif_data["VIF"] = [variance_inflation_factor(df2_with_const.values, i) for i in range(df2_with_const.shape[1])]
-            vif_data = vif_data[vif_data["Variable"] !="const"]
             st.write("Variance Inflation Factor (VIF):")
             st.write(vif_data)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: Measures the increase in variance of the estimated regression coefficients due to collinearity.
-                        
-                        **What it tells us**: VIF values above 10 indicate high multicollinearity, suggesting that the predictor variables are highly correlated and may not be suitable for regression analysis.
-                        """)
+            st.markdown("""
+            **What it is**: Measures the increase in variance of the estimated regression coefficients due to collinearity.
+            
+            **What it tells us**: VIF values above 10 indicate high multicollinearity, suggesting that the predictor variables are highly correlated and may not be suitable for regression analysis.
+            """)
 
             # Factor Analysis
             st.subheader("Factor Analysis")
 
-            # if st.checkbox("Click to select method and rotation"):
-            #     rotation_options = ["None", "Varimax", "Promax", "Quartimax", "Oblimin"]
-            #     rotation = st.selectbox("Select rotation:", rotation_options)
-            #     method_options = ["Principal", "Minres", "ML", "GLS", "OLS"]
-            #     method = st.selectbox("Select method:", method_options)
-            #     if rotation == "None":
-            #         rotation = None
-            #     if method == "Principal":
-            #         method = "principal"
-            # else:
-            rotation = "varimax"
-            method = "principal"
+            if st.checkbox("Click to select method and rotation"):
+                rotation_options = ["None", "Varimax", "Promax", "Quartimax", "Oblimin"]
+                rotation = st.selectbox("Select rotation:", rotation_options)
+                method_options = ["Principal", "Minres", "ML", "GLS", "OLS"]
+                method = st.selectbox("Select method:", method_options)
+                if rotation == "None":
+                    rotation = None
+                if method == "Principal":
+                    method = "principal"
+            else:
+                rotation = "varimax"
+                method = "principal"
 
             st.write(f"Method: {method}, Rotation: {rotation}")
-            # Explanation for Principal and Varimax
-            with st.expander("Description"):
-                st.markdown("""
-                **Method: Principal**
-                
-                **What it is**: Principal axis factoring (Principal) is a method of factor extraction that aims to explain the maximum amount of variance with each factor.
-                
-                **What it does**: It simplifies the factor analysis model by transforming the original variables into a smaller set of uncorrelated factors, which makes the underlying structure of the data more interpretable.
-                
-                **Rotation: Varimax**
-                
-                **What it is**: Varimax rotation is an orthogonal rotation method that simplifies the loadings of factors to make interpretation easier.
-                
-                **What it does**: It maximizes the variance of squared loadings of a factor across variables, which helps to achieve a clearer separation of factors, making it easier to identify which variables are most strongly associated with each factor.                
-                """)
 
             n_factors = st.number_input("Enter the number of factors:", min_value=1, max_value=df2.shape[1], value=6)
             fa = FactorAnalyzer(n_factors=n_factors, method=method, rotation=rotation)
@@ -215,7 +197,7 @@ def main():
             fa_df = pd.DataFrame(fa.loadings_.round(2), index=df2.columns)
             st.write("Factor Loadings:")
             st.write(fa_df)
-            with st.expander("Description"):
+            with st.expander{"Description"):
                         st.markdown("""
                         **What it is**: Shows how much each variable contributes to each factor.
                         
@@ -229,7 +211,7 @@ def main():
             st.write("Factor Variance:")
             variance_df = pd.DataFrame(fa.get_factor_variance(), index=['Variance', 'Proportional Var', 'Cumulative Var']).T
             st.write(variance_df)
-            with st.expander("Description"):
+            with st.expander("Description):
                         st.markdown("""
                         **What it is**: The variance explained by each factor.
                         
@@ -430,4 +412,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
