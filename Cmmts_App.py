@@ -194,7 +194,7 @@ def main():
 
             st.write(f"Method: {method}, Rotation: {rotation}")
             # Explanation for Principal and Varimax
-            with st.expander("Method: Principal Description"):
+            with st.expander("Description"):
                 st.markdown("""
                 **Method: Principal**
                 
@@ -207,13 +207,6 @@ def main():
                 **What it is**: Varimax rotation is an orthogonal rotation method that simplifies the loadings of factors to make interpretation easier.
                 
                 **What it does**: It maximizes the variance of squared loadings of a factor across variables, which helps to achieve a clearer separation of factors, making it easier to identify which variables are most strongly associated with each factor.                
-                """)
-            
-            with st.expander("Rotation: Varimax Description"):
-                st.markdown("""
-                **What it is**: Varimax rotation is an orthogonal rotation method that simplifies the loadings of factors to make interpretation easier.
-                
-                **What it does**: It maximizes the variance of squared loadings of a factor across variables, which helps to achieve a clearer separation of factors, making it easier to identify which variables are most strongly associated with each factor.
                 """)
 
             n_factors = st.number_input("Enter the number of factors:", min_value=1, max_value=df2.shape[1], value=6)
