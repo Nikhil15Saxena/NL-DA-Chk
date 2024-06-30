@@ -193,6 +193,28 @@ def main():
             method = "principal"
 
             st.write(f"Method: {method}, Rotation: {rotation}")
+            # Explanation for Principal and Varimax
+            with st.expander("Method: Principal Description"):
+                st.markdown("""
+                **Method: Principal**
+                
+                **What it is**: Principal axis factoring (Principal) is a method of factor extraction that aims to explain the maximum amount of variance with each factor.
+                
+                **What it does**: It simplifies the factor analysis model by transforming the original variables into a smaller set of uncorrelated factors, which makes the underlying structure of the data more interpretable.
+                
+                **Rotation: Varimax**
+                
+                **What it is**: Varimax rotation is an orthogonal rotation method that simplifies the loadings of factors to make interpretation easier.
+                
+                **What it does**: It maximizes the variance of squared loadings of a factor across variables, which helps to achieve a clearer separation of factors, making it easier to identify which variables are most strongly associated with each factor.                
+                """)
+            
+            with st.expander("Rotation: Varimax Description"):
+                st.markdown("""
+                **What it is**: Varimax rotation is an orthogonal rotation method that simplifies the loadings of factors to make interpretation easier.
+                
+                **What it does**: It maximizes the variance of squared loadings of a factor across variables, which helps to achieve a clearer separation of factors, making it easier to identify which variables are most strongly associated with each factor.
+                """)
 
             n_factors = st.number_input("Enter the number of factors:", min_value=1, max_value=df2.shape[1], value=6)
             fa = FactorAnalyzer(n_factors=n_factors, method=method, rotation=rotation)
