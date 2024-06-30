@@ -189,8 +189,8 @@ def main():
             #     if method == "Principal":
             #         method = "principal"
             # else:
-                rotation = "varimax"
-                method = "principal"
+            rotation = "varimax"
+            method = "principal"
 
             st.write(f"Method: {method}, Rotation: {rotation}")
 
