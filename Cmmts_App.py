@@ -310,6 +310,7 @@ def main():
                 final_params = best_params
             else:
                 final_params = manual_params if manual_params else default_params[model_selection]
+
             
             st.write("Current Hyperparameters used:")
             st.write(final_params)
