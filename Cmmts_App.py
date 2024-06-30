@@ -231,7 +231,7 @@ def main():
                 for attr in high_loading_attrs.index:
                     row = {'Attribute': attr}
                     for j in range(n_factors):
-                        row[f'Component {j+1}'] = fa_df.loc[attr, j]
+                        row[f'Factor {j+1}'] = fa_df.loc[attr, j]
                     sorted_loadings.append(row)
                     assigned_rows.add(attr)
             
@@ -244,7 +244,7 @@ def main():
             for attr in remaining_attrs:
                 row = {'Attribute': attr}
                 for j in range(n_factors):
-                    row[f'Component {j+1}'] = fa_df.loc[attr, j]
+                    row[f'Factor {j+1}'] = fa_df.loc[attr, j]
                 remaining_rows.append(row)
             
             # Concatenate the remaining rows to the sorted loadings DataFrame
