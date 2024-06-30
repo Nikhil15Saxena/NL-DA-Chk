@@ -254,29 +254,27 @@ def main():
             }
             
             default_params = {
-                'RandomForest': {'n_estimators': 500, 'max_depth': 5, 'max_features': 3},
+                'RandomForest': {'max_depth': 3, 'max_features': 3, 'n_estimators': 500},
                 'GBM': {'learning_rate': 0.1, 'n_estimators': 100, 'max_depth': 3},
                 'XGBoost': {'learning_rate': 0.1, 'n_estimators': 100, 'max_depth': 3}
             }
             
-            st.subheader("Model Training and Hyperparameter Tuning")
+            model_selection = st.selectbox("Select Model", list(models.keys()))
             
-            # Model selection and parameters
-            model_selection = st.selectbox("Select model:", models.keys())
-            
+            # Manual Hyperparameters
             manual_params = {}
-            if st.checkbox("Set hyperparameters manually"):
+            if st.checkbox(f"Manually set {model_selection} parameters"):
                 if model_selection == 'RandomForest':
-                    manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=5)
+                    manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
                     manual_params['max_features'] = st.number_input("max_features", min_value=1, max_value=X.shape[1], value=3)
-                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=100, max_value=1000, step=100, value=500)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=100, max_value=2000, step=100, value=500)
                 elif model_selection == 'GBM':
                     manual_params['learning_rate'] = st.number_input("learning_rate", min_value=0.01, max_value=1.0, step=0.01, value=0.1)
-                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=500, step=50, value=100)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=1000, step=50, value=100)
                     manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
                 elif model_selection == 'XGBoost':
                     manual_params['learning_rate'] = st.number_input("learning_rate", min_value=0.01, max_value=1.0, step=0.01, value=0.1)
-                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=500, step=50, value=100)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=1000, step=50, value=100)
                     manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
             
             # GridSearchCV
@@ -320,7 +318,7 @@ def main():
             model.fit(X_train, y_train)
             y_train_pred = model.predict(X_train)
             y_test_pred = model.predict(X_test)
-                        
+                    
             # Metrics
             cf_train = confusion_matrix(y_train, y_train_pred)
             cf_test = confusion_matrix(y_test, y_test_pred)
