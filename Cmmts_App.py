@@ -252,7 +252,7 @@ def main():
             sorted_loadings_df = pd.concat([sorted_loadings_df, remaining_df], ignore_index=True)
             
             # Display the sorted loadings
-            st.write("Sorted Factor Loadings:")
+            st.write("Factor Loadings:")
             st.write(sorted_loadings_df)
                     
             with st.expander("Description"):
