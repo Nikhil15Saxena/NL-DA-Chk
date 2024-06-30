@@ -112,24 +112,22 @@ def main():
             chi2, p = calculate_bartlett_sphericity(df2)
             st.markdown("**Bartlett’s Test of Sphericity:**")
             st.write(f"Chi-squared value: {chi2}, p-value: {p:.3f}")
-            with st.expander("Description"):
-                        st.write("""
-                        **What it is**: A statistical test used to examine the hypothesis that the variables in a dataset are uncorrelated.
+            st.markdown("""
+            **What it is**: A statistical test used to examine the hypothesis that the variables in a dataset are uncorrelated.
             
-                        **What it tells us**: If the test is significant (p < 0.05), it indicates that the variables are correlated and suitable for factor analysis.
-                        """)
+            **What it tells us**: If the test is significant (p < 0.05), it indicates that the variables are correlated and suitable for factor analysis.
+            """)
 
 
             # Kaiser-Meyer-Olkin (KMO) Test
             kmo_values, kmo_model = calculate_kmo(df2)
             st.write("**Kaiser-Meyer-Olkin (KMO) Test:**")
             st.write(f"KMO Test Statistic: {kmo_model}")
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: A measure of how suited data is for factor analysis. It assesses the proportion of variance among variables that might be common variance.
-                        
-                        **What it tells us**: A KMO value closer to 1 indicates that a factor analysis may be useful. Values below 0.6 generally indicate the data is not suitable for factor analysis.
-                        """)
+            st.markdown("""
+            **What it is**: A measure of how suited data is for factor analysis. It assesses the proportion of variance among variables that might be common variance.
+            
+            **What it tells us**: A KMO value closer to 1 indicates that a factor analysis may be useful. Values below 0.6 generally indicate the data is not suitable for factor analysis.
+            """)
 
             # Scree Plot
             fa = FactorAnalyzer(rotation=None, impute="drop", n_factors=df2.shape[1])
@@ -143,12 +141,11 @@ def main():
             plt.ylabel('Eigen Value')
             plt.grid()
             st.pyplot(plt)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: A graph showing the eigenvalues of the factors in descending order.
-                        
-                        **What it tells us**: Helps to determine the number of factors to retain by identifying the point where the curve starts to flatten (the "elbow").
-                        """)
+            st.markdown("""
+            **What it is**: A graph showing the eigenvalues of the factors in descending order.
+            
+            **What it tells us**: Helps to determine the number of factors to retain by identifying the point where the curve starts to flatten (the "elbow").
+            """)
 
             # Heatmap of correlation matrix
             plt.figure(figsize=(20, 10))
@@ -197,12 +194,11 @@ def main():
             fa_df = pd.DataFrame(fa.loadings_.round(2), index=df2.columns)
             st.write("Factor Loadings:")
             st.write(fa_df)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: Shows how much each variable contributes to each factor.
-                        
-                        **What it tells us**: High loadings indicate that a variable strongly influences the factor. It helps in understanding the underlying structure of the data.
-                        """)
+            st.markdown("""
+            **What it is**: Shows how much each variable contributes to each factor.
+            
+            **What it tells us**: High loadings indicate that a variable strongly influences the factor. It helps in understanding the underlying structure of the data.
+            """)
 
             # Download factor loadings as CSV
             csv = fa_df.to_csv().encode('utf-8')
@@ -211,22 +207,20 @@ def main():
             st.write("Factor Variance:")
             variance_df = pd.DataFrame(fa.get_factor_variance(), index=['Variance', 'Proportional Var', 'Cumulative Var']).T
             st.write(variance_df)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: The variance explained by each factor.
-                        
-                        **What it tells us**: Shows the proportion of total variance accounted for by each factor. Higher variance indicates a more significant factor.
-                        """)
+            st.markdown("""
+            **What it is**: The variance explained by each factor.
+            
+            **What it tells us**: Shows the proportion of total variance accounted for by each factor. Higher variance indicates a more significant factor.
+            """)
 
             # Communality
             st.write("Communality:")
             st.write(pd.DataFrame(fa.get_communalities(), index=df2.columns, columns=["Communality"]))
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: The proportion of variance in each variable explained by all the factors together.
-                        
-                        **What it tells us**: High communality values indicate that the variable is well represented by the factors extracted from the factor analysis.
-                        """)
+            st.markdown("""
+            **What it is**: The proportion of variance in each variable explained by all the factors together.
+            
+            **What it tells us**: High communality values indicate that the variable is well represented by the factors extracted from the factor analysis.
+            """)
 
             # User-defined cluster names
             cluster_titles = st.text_input("Enter cluster names (comma-separated):", value="Efficacy,Supply and Samples,Patient Benefits,Cost and Coverage,Approval,MACE")
@@ -235,12 +229,11 @@ def main():
             factor_scores = pd.DataFrame(factor_scores, columns=cluster_titles)
             st.write("Factor Scores:")
             st.write(factor_scores)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: The scores (weights) assigned to each observation for each factor.
-                        
-                        **What it tells us**: Helps to interpret the relative importance of each factor for individual observations in the dataset.
-                        """)
+            st.markdown("""
+            **What it is**: The scores (weights) assigned to each observation for each factor.
+            
+            **What it tells us**: Helps to interpret the relative importance of each factor for individual observations in the dataset.
+            """)
 
             # Split data
             X = factor_scores
@@ -254,51 +247,53 @@ def main():
             }
             
             default_params = {
-                'RandomForest': {'max_depth': 3, 'max_features': 3, 'n_estimators': 500},
+                'RandomForest': {'n_estimators': 500, 'max_depth': 5, 'max_features': 3},
                 'GBM': {'learning_rate': 0.1, 'n_estimators': 100, 'max_depth': 3},
                 'XGBoost': {'learning_rate': 0.1, 'n_estimators': 100, 'max_depth': 3}
             }
             
-            model_selection = st.selectbox("Select Model", list(models.keys()))
+            st.subheader("Model Training and Hyperparameter Tuning")
             
-            # Manual Hyperparameters
+            # Model selection and parameters
+            model_selection = st.selectbox("Select model:", models.keys())
+            
             manual_params = {}
-            if st.checkbox(f"Manually set {model_selection} parameters"):
+            if st.checkbox("Set hyperparameters manually"):
                 if model_selection == 'RandomForest':
-                    manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
+                    manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=5)
                     manual_params['max_features'] = st.number_input("max_features", min_value=1, max_value=X.shape[1], value=3)
-                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=100, max_value=2000, step=100, value=500)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=100, max_value=1000, step=100, value=500)
                 elif model_selection == 'GBM':
                     manual_params['learning_rate'] = st.number_input("learning_rate", min_value=0.01, max_value=1.0, step=0.01, value=0.1)
-                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=1000, step=50, value=100)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=500, step=50, value=100)
                     manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
                 elif model_selection == 'XGBoost':
                     manual_params['learning_rate'] = st.number_input("learning_rate", min_value=0.01, max_value=1.0, step=0.01, value=0.1)
-                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=1000, step=50, value=100)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=500, step=50, value=100)
                     manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
             
             # GridSearchCV
             grid_search_params = st.checkbox("Use GridSearchCV for hyperparameter tuning")
             if grid_search_params:
-                st.write(f"Enter GridSearchCV parameters for {model_selection}:")
+                st.write(f"Define GridSearchCV parameters for {model_selection}:")
                 param_grid = {}
                 if model_selection == 'RandomForest':
                     param_grid = {
-                        'max_depth': st.multiselect("max_depth", [2, 3, 4, 5, 6, 7, 8, 9, 10, 11], default=[3]),
+                        'max_depth': st.multiselect("max_depth", [2, 3, 5, 10, 15], default=[3]),
                         'max_features': st.multiselect("max_features", list(range(1, X.shape[1] + 1)), default=[3]),
-                        'n_estimators': st.multiselect("n_estimators", [100, 200, 500, 1000, 1500, 2000], default=[500])
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 500], default=[500])
                     }
                 elif model_selection == 'GBM':
                     param_grid = {
-                        'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2, 0.3, 0.4], default=[0.1]),
-                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300, 400, 500, 600], default=[100]),
-                        'max_depth': st.multiselect("max_depth", [3, 4, 5, 6, 7, 8, 9], default=[3])
+                        'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2], default=[0.1]),
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300], default=[100]),
+                        'max_depth': st.multiselect("max_depth", [3, 5, 7], default=[3])
                     }
                 elif model_selection == 'XGBoost':
                     param_grid = {
                         'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2], default=[0.1]),
-                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300, 400, 500, 600], default=[100]),
-                        'max_depth': st.multiselect("max_depth", [3, 4, 5, 6, 7, 8, 9], default=[3])
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300], default=[100]),
+                        'max_depth': st.multiselect("max_depth", [3, 5, 7], default=[3])
                     }
             
                 st.write(f"Running GridSearchCV for {model_selection}...")
@@ -310,7 +305,6 @@ def main():
                 final_params = best_params
             else:
                 final_params = manual_params if manual_params else default_params[model_selection]
-
             
             st.write("Current Hyperparameters used:")
             st.write(final_params)
