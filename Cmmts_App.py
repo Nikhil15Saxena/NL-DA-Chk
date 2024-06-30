@@ -362,7 +362,7 @@ def main():
                     }
             
                 st.write(f"Running GridSearchCV for {model_selection}...")
-                grid_search = GridSearchCV(estimator=models[model_selection], param_grid=param_grid, cv=5, n_jobs=-1, verbose=2)
+                grid_search = GridSearchCV(estimator=models[model_selection], param_grid=param_grid, cv=5, n_jobs=2, verbose=2)
                 grid_search.fit(X_train, y_train)
                 best_params = grid_search.best_params_
                 st.write("Best Hyperparameters found by GridSearchCV:")
