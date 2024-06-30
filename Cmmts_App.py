@@ -197,7 +197,7 @@ def main():
             fa_df = pd.DataFrame(fa.loadings_.round(2), index=df2.columns)
             st.write("Factor Loadings:")
             st.write(fa_df)
-            with st.expander{"Description"):
+            with st.expander("Description"):
                         st.markdown("""
                         **What it is**: Shows how much each variable contributes to each factor.
                         
