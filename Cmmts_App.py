@@ -13,6 +13,7 @@ from factor_analyzer.factor_analyzer import calculate_bartlett_sphericity, calcu
 from sklearn.tree import export_graphviz
 import pydotplus
 from io import StringIO
+from io import StringIO, BytesIO
 import graphviz
 import xgboost as xgb
 
