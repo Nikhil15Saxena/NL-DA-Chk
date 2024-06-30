@@ -318,7 +318,7 @@ def main():
             model.fit(X_train, y_train)
             y_train_pred = model.predict(X_train)
             y_test_pred = model.predict(X_test)
-                    
+            
             # Metrics
             cf_train = confusion_matrix(y_train, y_train_pred)
             cf_test = confusion_matrix(y_test, y_test_pred)
@@ -338,33 +338,11 @@ def main():
             st.write("Classification Report:")
             st.text(classification_report(y_test, y_test_pred))
             
-            # Feature importance
-            st.subheader("Feature Importance")
-
             # Feature Importance
             imp_df = pd.DataFrame({"varname": X_train.columns, "Importance": model.feature_importances_ * 100})
             imp_df.sort_values(by="Importance", ascending=False, inplace=True)
             st.write("Feature Importance:")
             st.write(imp_df)
-
-            # Plotting Feature Importance
-            plt.figure(figsize=(10, 6))
-            plt.barh(range(len(imp_df)), imp_df["Importance"], align='center')
-            plt.yticks(range(len(imp_df)), imp_df["varname"])
-            plt.gca().invert_yaxis()  # Invert y-axis to have the most important feature at the top
-            plt.xlabel('Importance')
-            plt.title('Feature Importance')
-            st.pyplot(plt)
-
-            # Add explanation for feature importance
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: Feature importance is a measure of the influence each feature has on the predictions made by the model.
-                        
-                        **What it tells us**: Higher importance values indicate that the feature has a greater impact on the model's decision-making process.
-                        
-                        **How to interpret it**: Features with higher importance scores contribute more significantly to the prediction outcomes. This can help identify which variables are most influential in determining the target variable.
-                        """)
             
             # Button to display ROC Curve
             if st.button("Show ROC Curve"):
