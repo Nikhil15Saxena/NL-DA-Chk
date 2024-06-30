@@ -214,7 +214,7 @@ def main():
             fa.fit(df2)
             fa_df = pd.DataFrame(fa.loadings_.round(2), index=df2.columns)
             
-            sorted_loadings = pd.DataFrame(index=fa_df.index)
+            sorted_loadings_list = []
             
             # Keep track of the rows already assigned
             assigned_rows = set()
@@ -227,15 +227,17 @@ def main():
                 high_loading_attrs = sorted_factor[sorted_factor > 0.5]
                 high_loading_attrs = high_loading_attrs[~high_loading_attrs.index.isin(assigned_rows)]
             
-                # Assign these attributes to the sorted loadings DataFrame
-                sorted_loadings[f'Factor {i+1}'] = high_loading_attrs.index
+                # Assign these attributes to a new DataFrame
+                sorted_factor_df = pd.DataFrame({f'Factor {i+1}': high_loading_attrs.index})
+                sorted_loadings_list.append(sorted_factor_df)
                 assigned_rows.update(high_loading_attrs.index)
             
-            # Reorganize the DataFrame to show attributes under their respective factors
-            sorted_loadings = sorted_loadings.dropna(how='all').fillna('')
+            # Concatenate all sorted factors into a single DataFrame
+            sorted_loadings = pd.concat(sorted_loadings_list, ignore_index=True)
             
             st.write("Sorted Factor Loadings:")
             st.write(sorted_loadings)
+                    
             with st.expander("Description"):
                         st.markdown("""
                         **What it is**: Shows how much each variable contributes to each factor.
