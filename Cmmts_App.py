@@ -362,7 +362,7 @@ def main():
                     }
             
                 st.write(f"Running GridSearchCV for {model_selection}...")
-                grid_search = GridSearchCV(estimator=models[model_selection], param_grid=param_grid, cv=5, n_jobs=2, verbose=2)
+                grid_search = GridSearchCV(estimator=models[model_selection], param_grid=param_grid, cv=5, n_jobs=-1, verbose=2)
                 grid_search.fit(X_train, y_train)
                 best_params = grid_search.best_params_
                 st.write("Best Hyperparameters found by GridSearchCV:")
@@ -388,12 +388,12 @@ def main():
             st.write("""**Train Data Metrics:**""")
             st.write(f"Accuracy: {accuracy_score(y_train, y_train_pred)}")
             st.write(f"Sensitivity: {TP_train / (TP_train + FN_train)}")
-            st.write(f"Specificity: {TN_train / (TN_train + FP_train)}")
+            #st.write(f"Specificity: {TN_train / (TN_train + FP_train)}")
             
             st.write("""**Test Data Metrics:**""")
             st.write(f"Accuracy: {accuracy_score(y_test, y_test_pred)}")
             st.write(f"Sensitivity: {TP_test / (TP_test + FN_test)}")
-            st.write(f"Specificity: {TN_test / (TN_test + FP_test)}")
+            #st.write(f"Specificity: {TN_test / (TN_test + FP_test)}")
             
             st.write("""**Classification Report:**""")
             st.text(classification_report(y_test, y_test_pred))
@@ -470,4 +470,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
