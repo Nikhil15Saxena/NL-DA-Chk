@@ -385,7 +385,7 @@ def main():
             TN_train, FP_train, FN_train, TP_train = cf_train.ravel()
             TN_test, FP_test, FN_test, TP_test = cf_test.ravel()
             
-            st.write("Train Data Metrics:")
+            st.write("""**Train Data Metrics:**""")
             st.write(f"Accuracy: {accuracy_score(y_train, y_train_pred)}")
             st.write(f"Sensitivity: {TP_train / (TP_train + FN_train)}")
             #st.write(f"Specificity: {TN_train / (TN_train + FP_train)}")
