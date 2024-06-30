@@ -224,7 +224,7 @@ def main():
                 sorted_factor = fa_df.iloc[:, i].abs().sort_values(ascending=False)
             
                 # Filter attributes with loadings above 0.5 and not already assigned
-                high_loading_attrs = sorted_factor[sorted_factor > 0.5]
+                high_loading_attrs = sorted_factor[sorted_factor > 0.4]
                 high_loading_attrs = high_loading_attrs[~high_loading_attrs.index.isin(assigned_rows)]
             
                 # Append these attributes to the list and mark them as assigned
