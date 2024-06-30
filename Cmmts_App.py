@@ -211,7 +211,7 @@ def main():
             st.write("Factor Variance:")
             variance_df = pd.DataFrame(fa.get_factor_variance(), index=['Variance', 'Proportional Var', 'Cumulative Var']).T
             st.write(variance_df)
-            with st.expander("Description):
+            with st.expander("Description"):
                         st.markdown("""
                         **What it is**: The variance explained by each factor.
                         
