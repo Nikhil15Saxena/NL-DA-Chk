@@ -240,11 +240,16 @@ def main():
             
             # Fill the rest of the attributes that were not included in any factor
             remaining_attrs = set(df2.columns) - assigned_rows
+            remaining_rows = []
             for attr in remaining_attrs:
                 row = {'Attribute': attr}
                 for j in range(n_factors):
                     row[f'Component {j+1}'] = fa_df.loc[attr, j]
-                sorted_loadings_df = sorted_loadings_df.append(row, ignore_index=True)
+                remaining_rows.append(row)
+            
+            # Concatenate the remaining rows to the sorted loadings DataFrame
+            remaining_df = pd.DataFrame(remaining_rows)
+            sorted_loadings_df = pd.concat([sorted_loadings_df, remaining_df], ignore_index=True)
             
             # Display the sorted loadings
             st.write("Sorted Factor Loadings:")
