@@ -213,48 +213,8 @@ def main():
             fa = FactorAnalyzer(n_factors=n_factors, method=method, rotation=rotation)
             fa.fit(df2)
             fa_df = pd.DataFrame(fa.loadings_.round(2), index=df2.columns)
-            
-            sorted_loadings = []
-            
-            # Keep track of the rows already assigned
-            assigned_rows = set()
-            
-            for i in range(n_factors):
-                # Sort loadings for the current factor in descending order
-                sorted_factor = fa_df.iloc[:, i].abs().sort_values(ascending=False)
-            
-                # Filter attributes with loadings above 0.5 and not already assigned
-                high_loading_attrs = sorted_factor[sorted_factor > 0.4]
-                high_loading_attrs = high_loading_attrs[~high_loading_attrs.index.isin(assigned_rows)]
-            
-                # Append these attributes to the list and mark them as assigned
-                for attr in high_loading_attrs.index:
-                    row = {'Attribute': attr}
-                    for j in range(n_factors):
-                        row[f'Factor {j+1}'] = fa_df.loc[attr, j]
-                    sorted_loadings.append(row)
-                    assigned_rows.add(attr)
-            
-            # Convert the sorted loadings list to a DataFrame
-            sorted_loadings_df = pd.DataFrame(sorted_loadings)
-            
-            # Fill the rest of the attributes that were not included in any factor
-            remaining_attrs = set(df2.columns) - assigned_rows
-            remaining_rows = []
-            for attr in remaining_attrs:
-                row = {'Attribute': attr}
-                for j in range(n_factors):
-                    row[f'Factor {j+1}'] = fa_df.loc[attr, j]
-                remaining_rows.append(row)
-            
-            # Concatenate the remaining rows to the sorted loadings DataFrame
-            remaining_df = pd.DataFrame(remaining_rows)
-            sorted_loadings_df = pd.concat([sorted_loadings_df, remaining_df], ignore_index=True)
-            
-            # Display the sorted loadings
             st.write("Factor Loadings:")
-            st.write(sorted_loadings_df)
-                    
+            st.write(fa_df)
             with st.expander("Description"):
                         st.markdown("""
                         **What it is**: Shows how much each variable contributes to each factor.
@@ -385,17 +345,17 @@ def main():
             TN_train, FP_train, FN_train, TP_train = cf_train.ravel()
             TN_test, FP_test, FN_test, TP_test = cf_test.ravel()
             
-            st.write("""**Train Data Metrics:**""")
+            st.write("Train Data Metrics:")
             st.write(f"Accuracy: {accuracy_score(y_train, y_train_pred)}")
             st.write(f"Sensitivity: {TP_train / (TP_train + FN_train)}")
             #st.write(f"Specificity: {TN_train / (TN_train + FP_train)}")
             
-            st.write("""**Test Data Metrics:**""")
+            st.write("Test Data Metrics:")
             st.write(f"Accuracy: {accuracy_score(y_test, y_test_pred)}")
             st.write(f"Sensitivity: {TP_test / (TP_test + FN_test)}")
             #st.write(f"Specificity: {TN_test / (TN_test + FP_test)}")
             
-            st.write("""**Classification Report:**""")
+            st.write("Classification Report:")
             st.text(classification_report(y_test, y_test_pred))
             
             # Feature importance
@@ -404,7 +364,7 @@ def main():
             # Feature Importance
             imp_df = pd.DataFrame({"varname": X_train.columns, "Importance": model.feature_importances_ * 100})
             imp_df.sort_values(by="Importance", ascending=False, inplace=True)
-            #st.write("Feature Importance:")
+            st.write("Feature Importance:")
             st.write(imp_df)
 
             # Plotting Feature Importance
@@ -470,3 +430,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
