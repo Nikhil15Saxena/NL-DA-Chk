@@ -214,7 +214,7 @@ def main():
             fa.fit(df2)
             fa_df = pd.DataFrame(fa.loadings_.round(2), index=df2.columns)
             
-            sorted_loadings_list = []
+            sorted_loadings = []
             
             # Keep track of the rows already assigned
             assigned_rows = set()
@@ -227,16 +227,28 @@ def main():
                 high_loading_attrs = sorted_factor[sorted_factor > 0.5]
                 high_loading_attrs = high_loading_attrs[~high_loading_attrs.index.isin(assigned_rows)]
             
-                # Assign these attributes to a new DataFrame
-                sorted_factor_df = pd.DataFrame({f'Factor {i+1}': high_loading_attrs.index})
-                sorted_loadings_list.append(sorted_factor_df)
-                assigned_rows.update(high_loading_attrs.index)
+                # Append these attributes to the list and mark them as assigned
+                for attr in high_loading_attrs.index:
+                    row = {'Attribute': attr}
+                    for j in range(n_factors):
+                        row[f'Component {j+1}'] = fa_df.loc[attr, j]
+                    sorted_loadings.append(row)
+                    assigned_rows.add(attr)
             
-            # Concatenate all sorted factors into a single DataFrame
-            sorted_loadings = pd.concat(sorted_loadings_list, ignore_index=True)
+            # Convert the sorted loadings list to a DataFrame
+            sorted_loadings_df = pd.DataFrame(sorted_loadings)
             
+            # Fill the rest of the attributes that were not included in any factor
+            remaining_attrs = set(df2.columns) - assigned_rows
+            for attr in remaining_attrs:
+                row = {'Attribute': attr}
+                for j in range(n_factors):
+                    row[f'Component {j+1}'] = fa_df.loc[attr, j]
+                sorted_loadings_df = sorted_loadings_df.append(row, ignore_index=True)
+            
+            # Display the sorted loadings
             st.write("Sorted Factor Loadings:")
-            st.write(sorted_loadings)
+            st.write(sorted_loadings_df)
                     
             with st.expander("Description"):
                         st.markdown("""
