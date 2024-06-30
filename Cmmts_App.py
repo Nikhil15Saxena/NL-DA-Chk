@@ -179,16 +179,16 @@ def main():
             # Factor Analysis
             st.subheader("Factor Analysis")
 
-            if st.checkbox("Click to select method and rotation"):
-                rotation_options = ["None", "Varimax", "Promax", "Quartimax", "Oblimin"]
-                rotation = st.selectbox("Select rotation:", rotation_options)
-                method_options = ["Principal", "Minres", "ML", "GLS", "OLS"]
-                method = st.selectbox("Select method:", method_options)
-                if rotation == "None":
-                    rotation = None
-                if method == "Principal":
-                    method = "principal"
-            else:
+            # if st.checkbox("Click to select method and rotation"):
+            #     rotation_options = ["None", "Varimax", "Promax", "Quartimax", "Oblimin"]
+            #     rotation = st.selectbox("Select rotation:", rotation_options)
+            #     method_options = ["Principal", "Minres", "ML", "GLS", "OLS"]
+            #     method = st.selectbox("Select method:", method_options)
+            #     if rotation == "None":
+            #         rotation = None
+            #     if method == "Principal":
+            #         method = "principal"
+            # else:
                 rotation = "varimax"
                 method = "principal"
 
