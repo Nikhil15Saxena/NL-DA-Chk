@@ -37,7 +37,7 @@ hide_streamlit_style = """
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
+    
 # Streamlit app
 def main():
     st.title("Non-Linear Classification Analysis Model_Commnts")
@@ -113,11 +113,11 @@ def main():
             st.markdown("**Bartlett’s Test of Sphericity:**")
             st.write(f"Chi-squared value: {chi2}, p-value: {p:.3f}")
             with st.expander("Description"):
-                st.write("""
-                **What it is**: A statistical test used to examine the hypothesis that the variables in a dataset are uncorrelated.
-
-                **What it tells us**: If the test is significant (p < 0.05), it indicates that the variables are correlated and suitable for factor analysis.
-                """)
+                        st.write("""
+                        **What it is**: A statistical test used to examine the hypothesis that the variables in a dataset are uncorrelated.
+            
+                        **What it tells us**: If the test is significant (p < 0.05), it indicates that the variables are correlated and suitable for factor analysis.
+                        """)
 
 
             # Kaiser-Meyer-Olkin (KMO) Test
@@ -125,11 +125,11 @@ def main():
             st.write("**Kaiser-Meyer-Olkin (KMO) Test:**")
             st.write(f"KMO Test Statistic: {kmo_model}")
             with st.expander("Description"):
-                st.markdown("""
-                **What it is**: A measure of how suited data is for factor analysis. It assesses the proportion of variance among variables that might be common variance.
-                
-                **What it tells us**: A KMO value closer to 1 indicates that a factor analysis may be useful. Values below 0.6 generally indicate the data is not suitable for factor analysis.
-                """)
+                        st.markdown("""
+                        **What it is**: A measure of how suited data is for factor analysis. It assesses the proportion of variance among variables that might be common variance.
+                        
+                        **What it tells us**: A KMO value closer to 1 indicates that a factor analysis may be useful. Values below 0.6 generally indicate the data is not suitable for factor analysis.
+                        """)
 
             # Scree Plot
             fa = FactorAnalyzer(rotation=None, impute="drop", n_factors=df2.shape[1])
@@ -144,11 +144,11 @@ def main():
             plt.grid()
             st.pyplot(plt)
             with st.expander("Description"):
-                st.markdown("""
-                **What it is**: A graph showing the eigenvalues of the factors in descending order.
-                
-                **What it tells us**: Helps to determine the number of factors to retain by identifying the point where the curve starts to flatten (the "elbow").
-                """)
+                        st.markdown("""
+                        **What it is**: A graph showing the eigenvalues of the factors in descending order.
+                        
+                        **What it tells us**: Helps to determine the number of factors to retain by identifying the point where the curve starts to flatten (the "elbow").
+                        """)
 
             # Heatmap of correlation matrix
             plt.figure(figsize=(20, 10))
@@ -198,11 +198,11 @@ def main():
             st.write("Factor Loadings:")
             st.write(fa_df)
             with st.expander("Description"):
-                st.markdown("""
-                **What it is**: Shows how much each variable contributes to each factor.
-                
-                **What it tells us**: High loadings indicate that a variable strongly influences the factor. It helps in understanding the underlying structure of the data.
-                """)
+                        st.markdown("""
+                        **What it is**: Shows how much each variable contributes to each factor.
+                        
+                        **What it tells us**: High loadings indicate that a variable strongly influences the factor. It helps in understanding the underlying structure of the data.
+                        """)
 
             # Download factor loadings as CSV
             csv = fa_df.to_csv().encode('utf-8')
@@ -212,202 +212,179 @@ def main():
             variance_df = pd.DataFrame(fa.get_factor_variance(), index=['Variance', 'Proportional Var', 'Cumulative Var']).T
             st.write(variance_df)
             with st.expander("Description"):
-                st.markdown("""
-                **What it is**: Shows the variance explained by each factor.
-                
-                **What it tells us**: Helps to determine the importance of each factor. High cumulative variance indicates that the factors explain a significant portion of the variance in the data.
-                """)
+                        st.markdown("""
+                        **What it is**: The variance explained by each factor.
+                        
+                        **What it tells us**: Shows the proportion of total variance accounted for by each factor. Higher variance indicates a more significant factor.
+                        """)
 
-            # Classification Model
-            st.subheader("Classification Model")
+            # Communality
+            st.write("Communality:")
+            st.write(pd.DataFrame(fa.get_communalities(), index=df2.columns, columns=["Communality"]))
+            with st.expander("Description"):
+                        st.markdown("""
+                        **What it is**: The proportion of variance in each variable explained by all the factors together.
+                        
+                        **What it tells us**: High communality values indicate that the variable is well represented by the factors extracted from the factor analysis.
+                        """)
 
-            model_type = st.selectbox("Select model type:", ["Random Forest", "Gradient Boosting", "XGBoost"])
-            test_size = st.slider("Select test size (as a proportion):", min_value=0.1, max_value=0.9, value=0.2)
+            # User-defined cluster names
+            cluster_titles = st.text_input("Enter cluster names (comma-separated):", value="Efficacy,Supply and Samples,Patient Benefits,Cost and Coverage,Approval,MACE")
+            cluster_titles = [x.strip() for x in cluster_titles.split(",")]
+            factor_scores = fa.transform(df2)
+            factor_scores = pd.DataFrame(factor_scores, columns=cluster_titles)
+            st.write("Factor Scores:")
+            st.write(factor_scores)
+            with st.expander("Description"):
+                        st.markdown("""
+                        **What it is**: The scores (weights) assigned to each observation for each factor.
+                        
+                        **What it tells us**: Helps to interpret the relative importance of each factor for individual observations in the dataset.
+                        """)
 
-            X_train, X_test, y_train, y_test = train_test_split(df2, y, test_size=test_size, random_state=42)
-
-            if model_type == "Random Forest":
-                rf = RandomForestClassifier(random_state=42)
-                if st.checkbox("Tune hyperparameters"):
-                    n_estimators = st.number_input("Enter number of estimators:", min_value=10, max_value=500, value=100)
-                    max_depth = st.number_input("Enter maximum depth:", min_value=1, max_value=50, value=10)
-                    rf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, random_state=42)
-                rf.fit(X_train, y_train)
-                y_pred = rf.predict(X_test)
-                st.write(f"Accuracy: {accuracy_score(y_test, y_pred)}")
-                st.write("Classification Report:")
-                st.write(classification_report(y_test, y_pred))
-                st.write("Confusion Matrix:")
-                st.write(confusion_matrix(y_test, y_pred))
-                with st.expander("Description"):
-                    st.markdown("""
-                    **Random Forest**: A versatile machine learning method capable of performing both regression and classification tasks. It is a type of ensemble learning method, where multiple models (trees) are trained on random subsets of the data and their predictions are averaged.
-
-                    **Classification Report**: Shows the main classification metrics including precision, recall, F1-score, and support.
-
-                    **Confusion Matrix**: A table used to describe the performance of a classification model by displaying the true positives, false positives, true negatives, and false negatives.
-                    """)
-                st.subheader("ROC Curve")
-                fpr, tpr, _ = roc_curve(y_test, rf.predict_proba(X_test)[:, 1])
-                roc_auc = auc(fpr, tpr)
-                plt.figure()
-                plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
-                plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-                plt.xlim([0.0, 1.0])
-                plt.ylim([0.0, 1.05])
-                plt.xlabel('False Positive Rate')
-                plt.ylabel('True Positive Rate')
-                plt.title('Receiver Operating Characteristic')
-                plt.legend(loc="lower right")
-                st.pyplot(plt)
-
-                # Feature Importance
-                st.subheader("Feature Importance")
-                feature_importance = pd.Series(rf.feature_importances_, index=df2.columns).sort_values(ascending=False)
-                st.write(feature_importance)
-                plt.figure(figsize=(10, 6))
-                feature_importance.plot(kind='bar')
-                plt.title('Feature Importance')
-                plt.ylabel('Importance')
-                plt.xlabel('Features')
-                st.pyplot(plt)
-                
-                with st.expander("Description"):
-                    st.markdown("""
-                    **Feature Importance**: Indicates the contribution of each feature to the prediction.
+            # Split data
+            X = factor_scores
+            X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=42)
                     
-                    **What it tells us**: Helps in identifying the most influential features for the model's predictions.
-                    """)
-
-                # Hyperparameter Tuning
-                if st.checkbox("Perform Grid Search for Hyperparameter Tuning"):
+            # Models and Hyperparameters
+            models = {
+                'RandomForest': RandomForestClassifier(random_state=42),
+                'GBM': GradientBoostingClassifier(random_state=42),
+                'XGBoost': xgb.XGBClassifier(random_state=42)
+            }
+            
+            default_params = {
+                'RandomForest': {'max_depth': 3, 'max_features': 3, 'n_estimators': 500},
+                'GBM': {'learning_rate': 0.1, 'n_estimators': 100, 'max_depth': 3},
+                'XGBoost': {'learning_rate': 0.1, 'n_estimators': 100, 'max_depth': 3}
+            }
+            
+            model_selection = st.selectbox("Select Model", list(models.keys()))
+            
+            # Manual Hyperparameters
+            manual_params = {}
+            if st.checkbox(f"Manually set {model_selection} parameters"):
+                if model_selection == 'RandomForest':
+                    manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
+                    manual_params['max_features'] = st.number_input("max_features", min_value=1, max_value=X.shape[1], value=3)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=100, max_value=2000, step=100, value=500)
+                elif model_selection == 'GBM':
+                    manual_params['learning_rate'] = st.number_input("learning_rate", min_value=0.01, max_value=1.0, step=0.01, value=0.1)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=1000, step=50, value=100)
+                    manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
+                elif model_selection == 'XGBoost':
+                    manual_params['learning_rate'] = st.number_input("learning_rate", min_value=0.01, max_value=1.0, step=0.01, value=0.1)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=1000, step=50, value=100)
+                    manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
+            
+            # GridSearchCV
+            grid_search_params = st.checkbox("Use GridSearchCV for hyperparameter tuning")
+            if grid_search_params:
+                st.write(f"Enter GridSearchCV parameters for {model_selection}:")
+                param_grid = {}
+                if model_selection == 'RandomForest':
                     param_grid = {
-                        'n_estimators': st.slider("Number of estimators", 50, 200, (100,)),
-                        'max_depth': st.slider("Maximum depth", 2, 20, (10,)),
-                        'min_samples_split': st.slider("Minimum samples split", 2, 20, (2,)),
-                        'min_samples_leaf': st.slider("Minimum samples leaf", 1, 20, (1,))
+                        'max_depth': st.multiselect("max_depth", [2, 3, 4, 5, 6, 7, 8, 9, 10, 11], default=[3]),
+                        'max_features': st.multiselect("max_features", list(range(1, X.shape[1] + 1)), default=[3]),
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 500, 1000, 1500, 2000], default=[500])
                     }
-                    grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2)
-                    grid_search.fit(X_train, y_train)
-                    best_params = grid_search.best_params_
-                    st.write("Best Parameters from Grid Search:")
-                    st.write(best_params)
-                    rf = RandomForestClassifier(**best_params)
-                    rf.fit(X_train, y_train)
-                    y_pred = rf.predict(X_test)
-                    st.write(f"Accuracy: {accuracy_score(y_test, y_pred)}")
-                    st.write("Classification Report:")
-                    st.write(classification_report(y_test, y_pred))
-                    st.write("Confusion Matrix:")
-                    st.write(confusion_matrix(y_test, y_pred))
-
-            elif model_type == "Gradient Boosting":
-                gb = GradientBoostingClassifier(random_state=42)
-                if st.checkbox("Tune hyperparameters"):
-                    n_estimators = st.number_input("Enter number of estimators:", min_value=10, max_value=500, value=100)
-                    max_depth = st.number_input("Enter maximum depth:", min_value=1, max_value=50, value=10)
-                    learning_rate = st.number_input("Enter learning rate:", min_value=0.01, max_value=1.0, value=0.1)
-                    gb = GradientBoostingClassifier(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate, random_state=42)
-                gb.fit(X_train, y_train)
-                y_pred = gb.predict(X_test)
-                st.write(f"Accuracy: {accuracy_score(y_test, y_pred)}")
-                st.write("Classification Report:")
-                st.write(classification_report(y_test, y_pred))
-                st.write("Confusion Matrix:")
-                st.write(confusion_matrix(y_test, y_pred))
-                with st.expander("Description"):
-                    st.markdown("""
-                    **Gradient Boosting**: An ensemble learning method that builds a model in a stage-wise fashion and generalizes them by allowing optimization of an arbitrary differentiable loss function.
-
-                    **Classification Report**: Shows the main classification metrics including precision, recall, F1-score, and support.
-
-                    **Confusion Matrix**: A table used to describe the performance of a classification model by displaying the true positives, false positives, true negatives, and false negatives.
-                    """)
-                st.subheader("ROC Curve")
-                fpr, tpr, _ = roc_curve(y_test, gb.predict_proba(X_test)[:, 1])
+                elif model_selection == 'GBM':
+                    param_grid = {
+                        'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2, 0.3, 0.4], default=[0.1]),
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300, 400, 500, 600], default=[100]),
+                        'max_depth': st.multiselect("max_depth", [3, 4, 5, 6, 7, 8, 9], default=[3])
+                    }
+                elif model_selection == 'XGBoost':
+                    param_grid = {
+                        'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2], default=[0.1]),
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300, 400, 500, 600], default=[100]),
+                        'max_depth': st.multiselect("max_depth", [3, 4, 5, 6, 7, 8, 9], default=[3])
+                    }
+            
+                st.write(f"Running GridSearchCV for {model_selection}...")
+                grid_search = GridSearchCV(estimator=models[model_selection], param_grid=param_grid, cv=5, n_jobs=-1, verbose=2)
+                grid_search.fit(X_train, y_train)
+                best_params = grid_search.best_params_
+                st.write("Best Hyperparameters found by GridSearchCV:")
+                st.write(best_params)
+                final_params = best_params
+            else:
+                final_params = manual_params if manual_params else default_params[model_selection]
+            
+            st.write("Current Hyperparameters used:")
+            st.write(final_params)
+            
+            model = models[model_selection].set_params(**final_params)
+            model.fit(X_train, y_train)
+            y_train_pred = model.predict(X_train)
+            y_test_pred = model.predict(X_test)
+            
+            # Metrics
+            cf_train = confusion_matrix(y_train, y_train_pred)
+            cf_test = confusion_matrix(y_test, y_test_pred)
+            TN_train, FP_train, FN_train, TP_train = cf_train.ravel()
+            TN_test, FP_test, FN_test, TP_test = cf_test.ravel()
+            
+            st.write("Train Data Metrics:")
+            st.write(f"Accuracy: {accuracy_score(y_train, y_train_pred)}")
+            st.write(f"Sensitivity: {TP_train / (TP_train + FN_train)}")
+            #st.write(f"Specificity: {TN_train / (TN_train + FP_train)}")
+            
+            st.write("Test Data Metrics:")
+            st.write(f"Accuracy: {accuracy_score(y_test, y_test_pred)}")
+            st.write(f"Sensitivity: {TP_test / (TP_test + FN_test)}")
+            #st.write(f"Specificity: {TN_test / (TN_test + FP_test)}")
+            
+            st.write("Classification Report:")
+            st.text(classification_report(y_test, y_test_pred))
+            
+            # Feature Importance
+            imp_df = pd.DataFrame({"varname": X_train.columns, "Importance": model.feature_importances_ * 100})
+            imp_df.sort_values(by="Importance", ascending=False, inplace=True)
+            st.write("Feature Importance:")
+            st.write(imp_df)
+            
+            # Button to display ROC Curve
+            if st.button("Show ROC Curve"):
+                fpr, tpr, _ = roc_curve(y_test, model.predict_proba(X_test)[:, 1])
                 roc_auc = auc(fpr, tpr)
-                plt.figure()
-                plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
-                plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-                plt.xlim([0.0, 1.0])
-                plt.ylim([0.0, 1.05])
+                plt.figure(figsize=(10, 6))
+                plt.plot(fpr, tpr, color='blue', label=f'ROC curve (area = {roc_auc:.2f})')
+                plt.plot([0, 1], [0, 1], color='red', linestyle='--')
                 plt.xlabel('False Positive Rate')
                 plt.ylabel('True Positive Rate')
-                plt.title('Receiver Operating Characteristic')
+                plt.title('Receiver Operating Characteristic (ROC) Curve')
                 plt.legend(loc="lower right")
                 st.pyplot(plt)
-
-                # Feature Importance
-                st.subheader("Feature Importance")
-                feature_importance = pd.Series(gb.feature_importances_, index=df2.columns).sort_values(ascending=False)
-                st.write(feature_importance)
-                plt.figure(figsize=(10, 6))
-                feature_importance.plot(kind='bar')
-                plt.title('Feature Importance')
-                plt.ylabel('Importance')
-                plt.xlabel('Features')
-                st.pyplot(plt)
-                
-                with st.expander("Description"):
-                    st.markdown("""
-                    **Feature Importance**: Indicates the contribution of each feature to the prediction.
-                    
-                    **What it tells us**: Helps in identifying the most influential features for the model's predictions.
-                    """)
-
-            elif model_type == "XGBoost":
-                xgb_clf = xgb.XGBClassifier(random_state=42)
-                if st.checkbox("Tune hyperparameters"):
-                    n_estimators = st.number_input("Enter number of estimators:", min_value=10, max_value=500, value=100)
-                    max_depth = st.number_input("Enter maximum depth:", min_value=1, max_value=50, value=10)
-                    learning_rate = st.number_input("Enter learning rate:", min_value=0.01, max_value=1.0, value=0.1)
-                    xgb_clf = xgb.XGBClassifier(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate, random_state=42)
-                xgb_clf.fit(X_train, y_train)
-                y_pred = xgb_clf.predict(X_test)
-                st.write(f"Accuracy: {accuracy_score(y_test, y_pred)}")
-                st.write("Classification Report:")
-                st.write(classification_report(y_test, y_pred))
-                st.write("Confusion Matrix:")
-                st.write(confusion_matrix(y_test, y_pred))
-                with st.expander("Description"):
-                    st.markdown("""
-                    **XGBoost**: An optimized distributed gradient boosting library designed to be highly efficient, flexible, and portable. It implements machine learning algorithms under the Gradient Boosting framework.
-
-                    **Classification Report**: Shows the main classification metrics including precision, recall, F1-score, and support.
-
-                    **Confusion Matrix**: A table used to describe the performance of a classification model by displaying the true positives, false positives, true negatives, and false negatives.
-                    """)
-                st.subheader("ROC Curve")
-                fpr, tpr, _ = roc_curve(y_test, xgb_clf.predict_proba(X_test)[:, 1])
-                roc_auc = auc(fpr, tpr)
-                plt.figure()
-                plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
-                plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-                plt.xlim([0.0, 1.0])
-                plt.ylim([0.0, 1.05])
-                plt.xlabel('False Positive Rate')
-                plt.ylabel('True Positive Rate')
-                plt.title('Receiver Operating Characteristic')
-                plt.legend(loc="lower right")
-                st.pyplot(plt)
-
-                # Feature Importance
-                st.subheader("Feature Importance")
-                feature_importance = pd.Series(xgb_clf.feature_importances_, index=df2.columns).sort_values(ascending=False)
-                st.write(feature_importance)
-                plt.figure(figsize=(10, 6))
-                feature_importance.plot(kind='bar')
-                plt.title('Feature Importance')
-                plt.ylabel('Importance')
-                plt.xlabel('Features')
-                st.pyplot(plt)
-                
-                with st.expander("Description"):
-                    st.markdown("""
-                    **Feature Importance**: Indicates the contribution of each feature to the prediction.
-                    
-                    **What it tells us**: Helps in identifying the most influential features for the model's predictions.
-                    """)
+            
+            # Button to display Trees for RandomForest, GBM, and XGBoost
+            if st.button("Show Trees"):
+                if model_selection == 'RandomForest':
+                    # Select one of the trees to display
+                    st.write("Displaying a single tree from the RandomForest ensemble:")
+                    estimator = model.estimators_[0]
+                    dot_data = StringIO()
+                    export_graphviz(estimator, out_file=dot_data, filled=True, rounded=True,
+                                    special_characters=True, feature_names=X.columns, class_names=model.classes_.astype(str))
+                    graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
+                    st.graphviz_chart(graph.to_string())
+            
+                elif model_selection == 'GBM':
+                    # Select one of the trees to display
+                    st.write("Displaying a single tree from the GBM ensemble:")
+                    estimator = model.estimators_[0, 0]
+                    dot_data = StringIO()
+                    export_graphviz(estimator, out_file=dot_data, filled=True, rounded=True,
+                                    special_characters=True, feature_names=X.columns, class_names=model.classes_.astype(str))
+                    graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
+                    st.graphviz_chart(graph.to_string())
+            
+                elif model_selection == 'XGBoost':
+                    # Select one of the trees to display
+                    st.write("Displaying a single tree from the XGBoost ensemble:")
+                    booster = model.get_booster()
+                    dot_data = xgb.to_graphviz(booster, num_trees=0)
+                    st.graphviz_chart(dot_data.source)
 
 if __name__ == "__main__":
     main()
