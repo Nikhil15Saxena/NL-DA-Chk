@@ -388,12 +388,12 @@ def main():
             st.write("""**Train Data Metrics:**""")
             st.write(f"Accuracy: {accuracy_score(y_train, y_train_pred)}")
             st.write(f"Sensitivity: {TP_train / (TP_train + FN_train)}")
-            #st.write(f"Specificity: {TN_train / (TN_train + FP_train)}")
+            st.write(f"Specificity: {TN_train / (TN_train + FP_train)}")
             
             st.write("""**Test Data Metrics:**""")
             st.write(f"Accuracy: {accuracy_score(y_test, y_test_pred)}")
             st.write(f"Sensitivity: {TP_test / (TP_test + FN_test)}")
-            #st.write(f"Specificity: {TN_test / (TN_test + FP_test)}")
+            st.write(f"Specificity: {TN_test / (TN_test + FP_test)}")
             
             st.write("""**Classification Report:**""")
             st.text(classification_report(y_test, y_test_pred))
