@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -12,7 +15,6 @@ from statsmodels.tools.tools import add_constant
 from factor_analyzer.factor_analyzer import calculate_bartlett_sphericity, calculate_kmo
 from sklearn.tree import export_graphviz
 import pydotplus
-from io import StringIO
 from io import StringIO, BytesIO
 import graphviz
 import xgboost as xgb
@@ -38,10 +40,10 @@ hide_streamlit_style = """
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-    
+
 # Streamlit app
 def main():
-    st.title("Non-Linear Classification Analysis Model_Commnts")
+    st.title("Non-Linear Classification Analysis Model_cmmnts")
 
     # Enhanced About section
     st.sidebar.title("About")
@@ -111,26 +113,13 @@ def main():
 
             # Bartlett’s Test of Sphericity
             chi2, p = calculate_bartlett_sphericity(df2)
-            st.markdown("**Bartlett’s Test of Sphericity:**")
-            st.write(f"Chi-squared value: {chi2}, p-value: {p:.3f}")
-            with st.expander("Description"):
-                        st.write("""
-                        **What it is**: A statistical test used to examine the hypothesis that the variables in a dataset are uncorrelated.
-            
-                        **What it tells us**: If the test is significant (p < 0.05), it indicates that the variables are correlated and suitable for factor analysis.
-                        """)
-
+            st.write("Bartlett’s Test of Sphericity:")
+            st.write(f"Chi-squared value: {chi2}, p-value: {p}")
 
             # Kaiser-Meyer-Olkin (KMO) Test
             kmo_values, kmo_model = calculate_kmo(df2)
-            st.write("**Kaiser-Meyer-Olkin (KMO) Test:**")
+            st.write("Kaiser-Meyer-Olkin (KMO) Test:")
             st.write(f"KMO Test Statistic: {kmo_model}")
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: This test measures the adequacy of sampling for factor analysis.
-                        
-                        **What it tells us**: A KMO value closer to 1 indicates that the data is suitable for factor analysis. Values below 0.6 generally indicate the data is not suitable for factor analysis.
-                        """)
 
             # Scree Plot
             fa = FactorAnalyzer(rotation=None, impute="drop", n_factors=df2.shape[1])
@@ -144,124 +133,44 @@ def main():
             plt.ylabel('Eigen Value')
             plt.grid()
             st.pyplot(plt)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: A graph showing the eigenvalues of the factors in descending order.
-                        
-                        **What it tells us**: Helps to determine the number of factors to retain by identifying the point where the curve starts to flatten (the "elbow").
-                        """)
 
             # Heatmap of correlation matrix
             plt.figure(figsize=(20, 10))
             sns.heatmap(df2.corr(), cmap="Reds", annot=True)
             st.pyplot(plt)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: A visual representation of the correlation matrix where the strength of correlation is represented by color intensity.
-                        
-                        **What it tells us**: Helps to identify the strength and direction of relationships between variables. High correlation values indicate multicollinearity.
-                        """)
 
             # Variance Inflation Factor (VIF)
             df2_with_const = add_constant(df2)
             vif_data = pd.DataFrame()
             vif_data["Variable"] = df2_with_const.columns
             vif_data["VIF"] = [variance_inflation_factor(df2_with_const.values, i) for i in range(df2_with_const.shape[1])]
-            vif_data = vif_data[vif_data["Variable"] !="const"]
             st.write("Variance Inflation Factor (VIF):")
             st.write(vif_data)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: Measures the increase in variance of the estimated regression coefficients due to collinearity.
-                        
-                        **What it tells us**: VIF values above 10 indicate high multicollinearity, suggesting that the predictor variables are highly correlated and may not be suitable for regression analysis.
-                        """)
 
             # Factor Analysis
             st.subheader("Factor Analysis")
 
-            # if st.checkbox("Click to select method and rotation"):
-            #     rotation_options = ["None", "Varimax", "Promax", "Quartimax", "Oblimin"]
-            #     rotation = st.selectbox("Select rotation:", rotation_options)
-            #     method_options = ["Principal", "Minres", "ML", "GLS", "OLS"]
-            #     method = st.selectbox("Select method:", method_options)
-            #     if rotation == "None":
-            #         rotation = None
-            #     if method == "Principal":
-            #         method = "principal"
-            # else:
-            rotation = "varimax"
-            method = "principal"
+            if st.checkbox("Click to select method and rotation"):
+                rotation_options = ["None", "Varimax", "Promax", "Quartimax", "Oblimin"]
+                rotation = st.selectbox("Select rotation:", rotation_options)
+                method_options = ["Principal", "Minres", "ML"]
+                method = st.selectbox("Select method:", method_options)
+                if rotation == "None":
+                    rotation = None
+                if method == "Principal":
+                    method = "principal"
+            else:
+                rotation = "varimax"
+                method = "principal"
 
             st.write(f"Method: {method}, Rotation: {rotation}")
-            # Explanation for Principal and Varimax
-            with st.expander("Description"):
-                st.markdown("""
-                **Method: Principal**
-                
-                **What it is**: Principal axis factoring (Principal) is a method of factor extraction that aims to explain the maximum amount of variance with each factor.
-                
-                **What it does**: It simplifies the factor analysis model by transforming the original variables into a smaller set of uncorrelated factors, which makes the underlying structure of the data more interpretable.
-                
-                **Rotation: Varimax**
-                
-                **What it is**: Varimax rotation is an orthogonal rotation method that simplifies the loadings of factors to make interpretation easier.
-                
-                **What it does**: It maximizes the variance of squared loadings of a factor across variables, which helps to achieve a clearer separation of factors, making it easier to identify which variables are most strongly associated with each factor.                
-                """)
 
             n_factors = st.number_input("Enter the number of factors:", min_value=1, max_value=df2.shape[1], value=6)
             fa = FactorAnalyzer(n_factors=n_factors, method=method, rotation=rotation)
             fa.fit(df2)
             fa_df = pd.DataFrame(fa.loadings_.round(2), index=df2.columns)
-            
-            sorted_loadings = []
-            
-            # Keep track of the rows already assigned
-            assigned_rows = set()
-            
-            for i in range(n_factors):
-                # Sort loadings for the current factor in descending order
-                sorted_factor = fa_df.iloc[:, i].abs().sort_values(ascending=False)
-            
-                # Filter attributes with loadings above 0.5 and not already assigned
-                high_loading_attrs = sorted_factor[sorted_factor > 0.4]
-                high_loading_attrs = high_loading_attrs[~high_loading_attrs.index.isin(assigned_rows)]
-            
-                # Append these attributes to the list and mark them as assigned
-                for attr in high_loading_attrs.index:
-                    row = {'Attribute': attr}
-                    for j in range(n_factors):
-                        row[f'Factor {j+1}'] = fa_df.loc[attr, j]
-                    sorted_loadings.append(row)
-                    assigned_rows.add(attr)
-            
-            # Convert the sorted loadings list to a DataFrame
-            sorted_loadings_df = pd.DataFrame(sorted_loadings)
-            
-            # Fill the rest of the attributes that were not included in any factor
-            remaining_attrs = set(df2.columns) - assigned_rows
-            remaining_rows = []
-            for attr in remaining_attrs:
-                row = {'Attribute': attr}
-                for j in range(n_factors):
-                    row[f'Factor {j+1}'] = fa_df.loc[attr, j]
-                remaining_rows.append(row)
-            
-            # Concatenate the remaining rows to the sorted loadings DataFrame
-            remaining_df = pd.DataFrame(remaining_rows)
-            sorted_loadings_df = pd.concat([sorted_loadings_df, remaining_df], ignore_index=True)
-            
-            # Display the sorted loadings
             st.write("Factor Loadings:")
-            st.write(sorted_loadings_df)
-                    
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: Shows how much each variable contributes to each factor.
-                        
-                        **What it tells us**: High loadings indicate that a variable strongly influences the factor. It helps in understanding the underlying structure of the data.
-                        """)
+            st.write(fa_df)
 
             # Download factor loadings as CSV
             csv = fa_df.to_csv().encode('utf-8')
@@ -270,22 +179,10 @@ def main():
             st.write("Factor Variance:")
             variance_df = pd.DataFrame(fa.get_factor_variance(), index=['Variance', 'Proportional Var', 'Cumulative Var']).T
             st.write(variance_df)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: The variance explained by each factor.
-                        
-                        **What it tells us**: Shows the proportion of total variance accounted for by each factor. Higher variance indicates a more significant factor.
-                        """)
 
             # Communality
             st.write("Communality:")
             st.write(pd.DataFrame(fa.get_communalities(), index=df2.columns, columns=["Communality"]))
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: The proportion of variance in each variable explained by all the factors together.
-                        
-                        **What it tells us**: High communality values indicate that the variable is well represented by the factors extracted from the factor analysis.
-                        """)
 
             # User-defined cluster names
             cluster_titles = st.text_input("Enter cluster names (comma-separated):", value="Efficacy,Supply and Samples,Patient Benefits,Cost and Coverage,Approval,MACE")
@@ -294,12 +191,6 @@ def main():
             factor_scores = pd.DataFrame(factor_scores, columns=cluster_titles)
             st.write("Factor Scores:")
             st.write(factor_scores)
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: The scores (weights) assigned to each observation for each factor.
-                        
-                        **What it tells us**: Helps to interpret the relative importance of each factor for individual observations in the dataset.
-                        """)
 
             # Split data
             X = factor_scores
@@ -313,53 +204,51 @@ def main():
             }
             
             default_params = {
-                'RandomForest': {'n_estimators': 500, 'max_depth': 5, 'max_features': 3},
+                'RandomForest': {'max_depth': 3, 'max_features': 3, 'n_estimators': 500},
                 'GBM': {'learning_rate': 0.1, 'n_estimators': 100, 'max_depth': 3},
                 'XGBoost': {'learning_rate': 0.1, 'n_estimators': 100, 'max_depth': 3}
             }
             
-            st.subheader("Model Training and Hyperparameter Tuning")
+            model_selection = st.selectbox("Select Model", list(models.keys()))
             
-            # Model selection and parameters
-            model_selection = st.selectbox("Select model:", models.keys())
-            
+            # Manual Hyperparameters
             manual_params = {}
-            if st.checkbox("Set hyperparameters manually"):
+            if st.checkbox(f"Manually set {model_selection} parameters"):
                 if model_selection == 'RandomForest':
-                    manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=5)
+                    manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
                     manual_params['max_features'] = st.number_input("max_features", min_value=1, max_value=X.shape[1], value=3)
-                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=100, max_value=1000, step=100, value=500)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=100, max_value=2000, step=100, value=500)
                 elif model_selection == 'GBM':
                     manual_params['learning_rate'] = st.number_input("learning_rate", min_value=0.01, max_value=1.0, step=0.01, value=0.1)
-                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=500, step=50, value=100)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=1000, step=50, value=100)
                     manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
                 elif model_selection == 'XGBoost':
                     manual_params['learning_rate'] = st.number_input("learning_rate", min_value=0.01, max_value=1.0, step=0.01, value=0.1)
-                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=500, step=50, value=100)
+                    manual_params['n_estimators'] = st.number_input("n_estimators", min_value=50, max_value=1000, step=50, value=100)
                     manual_params['max_depth'] = st.number_input("max_depth", min_value=1, max_value=20, value=3)
             
             # GridSearchCV
             grid_search_params = st.checkbox("Use GridSearchCV for hyperparameter tuning")
             if grid_search_params:
-                st.write(f"Define GridSearchCV parameters for {model_selection}:")
+                st.write(f"Enter GridSearchCV parameters for {model_selection}:")
                 param_grid = {}
                 if model_selection == 'RandomForest':
                     param_grid = {
-                        'max_depth': st.multiselect("max_depth", [2, 3, 5, 10, 15], default=[3]),
+                        'max_depth': st.multiselect("max_depth", [2, 3, 4, 5, 6, 7, 8, 9, 10, 11], default=[3]),
                         'max_features': st.multiselect("max_features", list(range(1, X.shape[1] + 1)), default=[3]),
-                        'n_estimators': st.multiselect("n_estimators", [100, 200, 500], default=[500])
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 500, 1000, 1500, 2000], default=[500])
                     }
                 elif model_selection == 'GBM':
                     param_grid = {
-                        'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2], default=[0.1]),
-                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300], default=[100]),
-                        'max_depth': st.multiselect("max_depth", [3, 5, 7], default=[3])
+                        'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2, 0.3, 0.4], default=[0.1]),
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300, 400, 500, 600], default=[100]),
+                        'max_depth': st.multiselect("max_depth", [3, 4, 5, 6, 7, 8, 9], default=[3])
                     }
                 elif model_selection == 'XGBoost':
                     param_grid = {
                         'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2], default=[0.1]),
-                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300], default=[100]),
-                        'max_depth': st.multiselect("max_depth", [3, 5, 7], default=[3])
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300, 400, 500, 600], default=[100]),
+                        'max_depth': st.multiselect("max_depth", [3, 4, 5, 6, 7, 8, 9], default=[3])
                     }
             
                 st.write(f"Running GridSearchCV for {model_selection}...")
@@ -386,46 +275,24 @@ def main():
             TN_train, FP_train, FN_train, TP_train = cf_train.ravel()
             TN_test, FP_test, FN_test, TP_test = cf_test.ravel()
             
-            st.write("""**Train Data Metrics:**""")
+            st.write("Train Data Metrics:")
             st.write(f"Accuracy: {accuracy_score(y_train, y_train_pred)}")
             st.write(f"Sensitivity: {TP_train / (TP_train + FN_train)}")
             #st.write(f"Specificity: {TN_train / (TN_train + FP_train)}")
             
-            st.write("""**Test Data Metrics:**""")
+            st.write("Test Data Metrics:")
             st.write(f"Accuracy: {accuracy_score(y_test, y_test_pred)}")
             st.write(f"Sensitivity: {TP_test / (TP_test + FN_test)}")
             #st.write(f"Specificity: {TN_test / (TN_test + FP_test)}")
             
-            st.write("""**Classification Report:**""")
+            st.write("Classification Report:")
             st.text(classification_report(y_test, y_test_pred))
             
-            # Feature importance
-            st.subheader("Feature Importance")
-
             # Feature Importance
             imp_df = pd.DataFrame({"varname": X_train.columns, "Importance": model.feature_importances_ * 100})
             imp_df.sort_values(by="Importance", ascending=False, inplace=True)
-            #st.write("Feature Importance:")
+            st.write("Feature Importance:")
             st.write(imp_df)
-
-            # Plotting Feature Importance
-            plt.figure(figsize=(10, 6))
-            plt.barh(range(len(imp_df)), imp_df["Importance"], align='center')
-            plt.yticks(range(len(imp_df)), imp_df["varname"])
-            plt.gca().invert_yaxis()  # Invert y-axis to have the most important feature at the top
-            plt.xlabel('Importance')
-            plt.title('Feature Importance')
-            st.pyplot(plt)
-
-            # Add explanation for feature importance
-            with st.expander("Description"):
-                        st.markdown("""
-                        **What it is**: Feature importance is a measure of the influence each feature has on the predictions made by the model.
-                        
-                        **What it tells us**: Higher importance values indicate that the feature has a greater impact on the model's decision-making process.
-                        
-                        **How to interpret it**: Features with higher importance scores contribute more significantly to the prediction outcomes. This can help identify which variables are most influential in determining the target variable.
-                        """)
             
             # Button to display ROC Curve
             if st.button("Show ROC Curve"):
