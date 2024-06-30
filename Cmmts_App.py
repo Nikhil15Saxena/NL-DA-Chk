@@ -282,25 +282,25 @@ def main():
             # GridSearchCV
             grid_search_params = st.checkbox("Use GridSearchCV for hyperparameter tuning")
             if grid_search_params:
-                st.write(f"Define GridSearchCV parameters for {model_selection}:")
+                st.write(f"Enter GridSearchCV parameters for {model_selection}:")
                 param_grid = {}
                 if model_selection == 'RandomForest':
                     param_grid = {
-                        'max_depth': st.multiselect("max_depth", [2, 3, 5, 10, 15], default=[3]),
+                        'max_depth': st.multiselect("max_depth", [2, 3, 4, 5, 6, 7, 8, 9, 10, 11], default=[3]),
                         'max_features': st.multiselect("max_features", list(range(1, X.shape[1] + 1)), default=[3]),
-                        'n_estimators': st.multiselect("n_estimators", [100, 200, 500], default=[500])
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 500, 1000, 1500, 2000], default=[500])
                     }
                 elif model_selection == 'GBM':
                     param_grid = {
-                        'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2], default=[0.1]),
-                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300], default=[100]),
-                        'max_depth': st.multiselect("max_depth", [3, 5, 7], default=[3])
+                        'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2, 0.3, 0.4], default=[0.1]),
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300, 400, 500, 600], default=[100]),
+                        'max_depth': st.multiselect("max_depth", [3, 4, 5, 6, 7, 8, 9], default=[3])
                     }
                 elif model_selection == 'XGBoost':
                     param_grid = {
                         'learning_rate': st.multiselect("learning_rate", [0.01, 0.1, 0.2], default=[0.1]),
-                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300], default=[100]),
-                        'max_depth': st.multiselect("max_depth", [3, 5, 7], default=[3])
+                        'n_estimators': st.multiselect("n_estimators", [100, 200, 300, 400, 500, 600], default=[100]),
+                        'max_depth': st.multiselect("max_depth", [3, 4, 5, 6, 7, 8, 9], default=[3])
                     }
             
                 st.write(f"Running GridSearchCV for {model_selection}...")
@@ -320,7 +320,7 @@ def main():
             model.fit(X_train, y_train)
             y_train_pred = model.predict(X_train)
             y_test_pred = model.predict(X_test)
-            
+                        
             # Metrics
             cf_train = confusion_matrix(y_train, y_train_pred)
             cf_test = confusion_matrix(y_test, y_test_pred)
