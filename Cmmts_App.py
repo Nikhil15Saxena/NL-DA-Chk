@@ -37,7 +37,7 @@ hide_streamlit_style = """
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-    
+
 # Streamlit app
 def main():
     st.title("Non-Linear Classification Analysis Model_Commnts")
@@ -111,10 +111,10 @@ def main():
             # Bartlett’s Test of Sphericity
             chi2, p = calculate_bartlett_sphericity(df2)
             st.markdown("**Bartlett’s Test of Sphericity:**")
-            st.write(f"Chi-squared value: {chi2}, p-value: {p:.3f}")
+            st.write(f"Chi-squared value: {chi2}, p-value: {p}")
             st.markdown("""
             **What it is**: A statistical test used to examine the hypothesis that the variables in a dataset are uncorrelated.
-            
+
             **What it tells us**: If the test is significant (p < 0.05), it indicates that the variables are correlated and suitable for factor analysis.
             """)
 
@@ -123,9 +123,8 @@ def main():
             kmo_values, kmo_model = calculate_kmo(df2)
             st.write("**Kaiser-Meyer-Olkin (KMO) Test:**")
             st.write(f"KMO Test Statistic: {kmo_model}")
-            st.markdown("""
+            st.write("""
             **What it is**: A measure of how suited data is for factor analysis. It assesses the proportion of variance among variables that might be common variance.
-            
             **What it tells us**: A KMO value closer to 1 indicates that a factor analysis may be useful. Values below 0.6 generally indicate the data is not suitable for factor analysis.
             """)
 
@@ -141,9 +140,8 @@ def main():
             plt.ylabel('Eigen Value')
             plt.grid()
             st.pyplot(plt)
-            st.markdown("""
+            st.write("""
             **What it is**: A graph showing the eigenvalues of the factors in descending order.
-            
             **What it tells us**: Helps to determine the number of factors to retain by identifying the point where the curve starts to flatten (the "elbow").
             """)
 
@@ -151,9 +149,8 @@ def main():
             plt.figure(figsize=(20, 10))
             sns.heatmap(df2.corr(), cmap="Reds", annot=True)
             st.pyplot(plt)
-            st.markdown("""
+            st.write("""
             **What it is**: A visual representation of the correlation matrix where the strength of correlation is represented by color intensity.
-            
             **What it tells us**: Helps to identify the strength and direction of relationships between variables. High correlation values indicate multicollinearity.
             """)
 
@@ -164,9 +161,8 @@ def main():
             vif_data["VIF"] = [variance_inflation_factor(df2_with_const.values, i) for i in range(df2_with_const.shape[1])]
             st.write("Variance Inflation Factor (VIF):")
             st.write(vif_data)
-            st.markdown("""
+            st.write("""
             **What it is**: Measures the increase in variance of the estimated regression coefficients due to collinearity.
-            
             **What it tells us**: VIF values above 10 indicate high multicollinearity, suggesting that the predictor variables are highly correlated and may not be suitable for regression analysis.
             """)
 
@@ -194,9 +190,8 @@ def main():
             fa_df = pd.DataFrame(fa.loadings_.round(2), index=df2.columns)
             st.write("Factor Loadings:")
             st.write(fa_df)
-            st.markdown("""
+            st.write("""
             **What it is**: Shows how much each variable contributes to each factor.
-            
             **What it tells us**: High loadings indicate that a variable strongly influences the factor. It helps in understanding the underlying structure of the data.
             """)
 
@@ -207,18 +202,16 @@ def main():
             st.write("Factor Variance:")
             variance_df = pd.DataFrame(fa.get_factor_variance(), index=['Variance', 'Proportional Var', 'Cumulative Var']).T
             st.write(variance_df)
-            st.markdown("""
+            st.write("""
             **What it is**: The variance explained by each factor.
-            
             **What it tells us**: Shows the proportion of total variance accounted for by each factor. Higher variance indicates a more significant factor.
             """)
 
             # Communality
             st.write("Communality:")
             st.write(pd.DataFrame(fa.get_communalities(), index=df2.columns, columns=["Communality"]))
-            st.markdown("""
+            st.write("""
             **What it is**: The proportion of variance in each variable explained by all the factors together.
-            
             **What it tells us**: High communality values indicate that the variable is well represented by the factors extracted from the factor analysis.
             """)
 
@@ -229,9 +222,8 @@ def main():
             factor_scores = pd.DataFrame(factor_scores, columns=cluster_titles)
             st.write("Factor Scores:")
             st.write(factor_scores)
-            st.markdown("""
+            st.write("""
             **What it is**: The scores (weights) assigned to each observation for each factor.
-            
             **What it tells us**: Helps to interpret the relative importance of each factor for individual observations in the dataset.
             """)
 
