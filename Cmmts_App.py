@@ -40,7 +40,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
     
 # Streamlit app
 def main():
-    st.title("Non-Linear Classification Analysis Model_Commnts")
+    st.title("Non-Linear Driver Analysis App")
 
     # Enhanced About section
     st.sidebar.title("About")
@@ -263,7 +263,7 @@ def main():
                         """)
 
             # Download factor loadings as CSV
-            csv = fa_df.to_csv().encode('utf-8')
+            csv = sorted_loadings_df.to_csv().encode('utf-8')
             st.download_button(label="Download Factor Loadings as CSV", data=csv, file_name='factor_loadings.csv', mime='text/csv')
 
             st.write("Factor Variance:")
@@ -388,12 +388,12 @@ def main():
             st.write("""**Train Data Metrics:**""")
             st.write(f"Accuracy: {accuracy_score(y_train, y_train_pred)}")
             st.write(f"Sensitivity: {TP_train / (TP_train + FN_train)}")
-            #st.write(f"Specificity: {TN_train / (TN_train + FP_train)}")
+            st.write(f"Specificity: {TN_train / (TN_train + FP_train)}")
             
             st.write("""**Test Data Metrics:**""")
             st.write(f"Accuracy: {accuracy_score(y_test, y_test_pred)}")
             st.write(f"Sensitivity: {TP_test / (TP_test + FN_test)}")
-            #st.write(f"Specificity: {TN_test / (TN_test + FP_test)}")
+            st.write(f"Specificity: {TN_test / (TN_test + FP_test)}")
             
             st.write("""**Classification Report:**""")
             st.text(classification_report(y_test, y_test_pred))
